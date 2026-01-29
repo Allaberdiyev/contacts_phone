@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:contacts_phone/core/services/notificaxtion_service.dart';
 import 'package:contacts_phone/core/utils/colors/app_colors.dart';
-import 'package:contacts_phone/features/contacts/presentation/widgets/custom_field.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/custom_field.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../data/models/contacts_model.dart';
+import '../../../data/models/contacts_model.dart';
 import '../bloc/contacts_bloc.dart';
 import '../bloc/contacts_event.dart';
 import '../bloc/contacts_state.dart';

@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacts_phone/core/utils/colors/app_colors.dart';
-import 'package:contacts_phone/features/contacts/presentation/bloc/contacts_bloc.dart';
-import 'package:contacts_phone/features/contacts/presentation/widgets/add_contact_sheet.dart';
-import 'package:contacts_phone/features/contacts/presentation/widgets/contact_title.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_bloc.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/add_contact_sheet.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/contact_title.dart';
 import 'package:contacts_phone/main.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../data/models/contacts_model.dart';
+import '../../../data/models/contacts_model.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
