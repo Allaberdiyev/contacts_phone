@@ -1,0 +1,16 @@
+{
+  "new_contact": "New Contact",
+  "edit_contact": "Edit Contact",
+  "first_name": "First name",
+  "last_name": "Last name",
+  "phone_number": "Phone number",
+  "enter_first_name": "Enter first name",
+  "enter_last_name": "Enter last name",
+  "phone_required": "Phone number is required",
+  "phone_must_start": "Phone must start with +998",
+  "enter_9_digits": "Enter 9 digits",
+  "contacts": "Contacts",
+  "no_contacts": "No contacts",
+  "edit": "Edit",
+  "delete": "Delete"
+}

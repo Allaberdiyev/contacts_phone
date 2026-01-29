@@ -1,0 +1,16 @@
+{
+    "new_contact": "Yangi kontakt",
+    "edit_contact": "Kontaktni tahrirlash",
+    "first_name": "Ism",
+    "last_name": "Familiya",
+    "phone_number": "Telefon raqam",
+    "enter_first_name": "Ism kiriting",
+    "enter_last_name": "Familiyangizni kiriting",
+    "phone_required": "Telefon raqam majburiy",
+    "phone_must_start": "Telefon +998 bilan boshlanishi kerak",
+    "enter_9_digits": "9 ta raqam kiriting",
+    "contacts": "Kontaktlar",
+    "no_contacts": "Kontakt yo‘q",
+    "edit": "Tahrirlash",
+    "delete": "O‘chirish"
+}

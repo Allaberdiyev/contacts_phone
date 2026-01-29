@@ -1,0 +1,16 @@
+{
+    "new_contact": "Новый контакт",
+    "edit_contact": "Редактировать контакт",
+    "first_name": "Имя",
+    "last_name": "Фамилия",
+    "phone_number": "Номер телефона",
+    "enter_first_name": "Введите имя",
+    "enter_last_name": "Введите фамилию",
+    "phone_required": "Номер телефона обязателен",
+    "phone_must_start": "Номер должен начинаться с +998",
+    "enter_9_digits": "Введите 9 цифр",
+    "contacts": "Контакты",
+    "no_contacts": "Нет контактов",
+    "edit": "Редактировать",
+    "delete": "Удалить"
+}
