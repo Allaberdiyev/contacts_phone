@@ -70,8 +70,9 @@ class _MainAppState extends State<MainApp> {
 
   ThemeData _lightTheme() {
     return ThemeData(
+      scaffoldBackgroundColor: AppColors.whitegrey,
       colorScheme: ColorScheme.light(
-        surface: Colors.white,
+        surface: AppColors.whitegrey,
         primary: AppColors.whitegrey,
       ),
     );

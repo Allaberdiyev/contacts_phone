@@ -1,7 +1,8 @@
 import 'package:contacts_phone/app/di/dependecy_injection.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_bloc.dart';
-import 'package:contacts_phone/features/contacts/presentation/contacts/pages/contact_page.dart';
+import 'package:contacts_phone/main/bloc/bottom_navigation_bloc.dart';
 import 'package:contacts_phone/main/bloc/theme_bloc.dart';
+import 'package:contacts_phone/main/page/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,8 +20,12 @@ class App extends StatelessWidget {
           create: (_) => getIt<ThemeBloc>()..add(LoadTheme()),
         ),
         BlocProvider<ContactBloc>(create: (_) => getIt<ContactBloc>()),
+
+        BlocProvider<BottomNavigationBloc>(
+          create: (_) => getIt<BottomNavigationBloc>(),
+        ),
       ],
-      child: const ContactsPage(),
+      child: MainPage(),
     );
   }
 }

@@ -1,9 +1,14 @@
-class ContactsModel {
+import 'package:azlistview/azlistview.dart';
+
+class ContactsModel extends ISuspensionBean {
   final String id;
   final String firstName;
   final String lastName;
   final String phoneNumber;
   final String imageUrl;
+
+  @override
+  String tag;
 
   ContactsModel({
     required this.id,
@@ -11,7 +16,11 @@ class ContactsModel {
     required this.lastName,
     required this.phoneNumber,
     required this.imageUrl,
+    this.tag = '',
   });
+
+  @override
+  String getSuspensionTag() => tag;
 
   Map<String, dynamic> toJson() {
     return {

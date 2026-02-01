@@ -4,8 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import '../../../data/models/contacts_model.dart';
 import '../bloc/contacts_bloc.dart';
 import 'add_contact_sheet.dart';
@@ -42,6 +40,8 @@ class ContactTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fullName = '${contact.firstName} ${contact.lastName}'.trim();
+    final hasName = fullName.isNotEmpty;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CupertinoContextMenu(
@@ -65,7 +65,7 @@ class ContactTile extends StatelessWidget {
       child: SizedBox(
         width: MediaQuery.sizeOf(context).width,
         child: Material(
-          color: isDark ? AppColors.dark : AppColors.white,
+          color: isDark ? AppColors.dark : AppColors.whitegrey,
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
@@ -78,7 +78,7 @@ class ContactTile extends StatelessWidget {
                   : null,
               child: contact.imageUrl.isEmpty
                   ? Text(
-                      initials.isEmpty ? '?' : initials,
+                      initials.isEmpty ? ' ' : initials,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: isDark ? AppColors.white : AppColors.dark,
@@ -87,43 +87,13 @@ class ContactTile extends StatelessWidget {
                   : null,
             ),
             title: Text(
-              '${contact.firstName} ${contact.lastName}',
+              hasName
+                  ? '${contact.firstName} ${contact.lastName}'
+                  : contact.phoneNumber,
               style: TextStyle(
                 fontSize: 16,
                 color: isDark ? AppColors.white : AppColors.dark,
                 fontWeight: FontWeight.bold,
-              ),
-            ),
-            subtitle: Text(
-              contact.phoneNumber,
-              style: TextStyle(
-                fontSize: 13,
-                color: isDark ? AppColors.white : AppColors.dark,
-              ),
-            ),
-            trailing: CircleAvatar(
-              backgroundColor: isDark
-                  ? AppColors.darkgrey
-                  : AppColors.whitegrey,
-              child: IconButton(
-                icon: Icon(Icons.phone, color: AppColors.blue),
-                onPressed: () async {
-                  final phone = contact.phoneNumber.replaceAll(
-                    RegExp(r'[^0-9+]'),
-                    '',
-                  );
-                  final uri = Uri(scheme: 'tel', path: phone);
-
-                  final ok = await launchUrl(
-                    uri,
-                    mode: LaunchMode.externalApplication,
-                  );
-                  if (!ok && context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Nomer ochilmadi")),
-                    );
-                  }
-                },
               ),
             ),
           ),
@@ -132,3 +102,30 @@ class ContactTile extends StatelessWidget {
     );
   }
 }
+
+
+//  trailing: CircleAvatar(
+//               backgroundColor: isDark
+//                   ? AppColors.darkgrey
+//                   : AppColors.whitegrey,
+//               child: IconButton(
+//                 icon: Icon(Icons.phone, color: AppColors.blue),
+//                 onPressed: () async {
+//                   final phone = contact.phoneNumber.replaceAll(
+//                     RegExp(r'[^0-9+]'),
+//                     '',
+//                   );
+//                   final uri = Uri(scheme: 'tel', path: phone);
+
+//                   final ok = await launchUrl(
+//                     uri,
+//                     mode: LaunchMode.externalApplication,
+//                   );
+//                   if (!ok && context.mounted) {
+//                     ScaffoldMessenger.of(context).showSnackBar(
+//                       const SnackBar(content: Text("Nomer ochilmadi")),
+//                     );
+//                   }
+//                 },
+//               ),
+//             ),

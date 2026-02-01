@@ -209,7 +209,7 @@ class _AddContactSheetState extends State<AddContactSheet> {
                                                   BorderRadius.circular(50),
                                               image: const DecorationImage(
                                                 image: AssetImage(
-                                                  "assets/pictures/image.png",
+                                                  "assets/pictures/white_person_icon.png",
                                                 ),
                                                 fit: BoxFit.cover,
                                               ),

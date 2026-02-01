@@ -35,7 +35,7 @@ class NotificationService {
     await _initLocalNotifications();
 
     final token = await FirebaseMessaging.instance.getToken();
-    print('FCM TOKEN: $token');
+    ('FCM TOKEN: $token');
 
     _listenForeground();
     _listenOpenedApp();
@@ -54,7 +54,7 @@ class NotificationService {
     await _local.initialize(
       settings: initSettings,
       onDidReceiveNotificationResponse: (resp) {
-        print('Local notification clicked. payload=${resp.payload}');
+        ('Local notification clicked. payload=${resp.payload}');
       },
     );
 
@@ -92,14 +92,14 @@ class NotificationService {
 
   void _listenOpenedApp() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('OPENED APP: data=${message.data}');
+      ('OPENED APP: data=${message.data}');
     });
   }
 
   Future<void> _checkInitialMessage() async {
     final msg = await FirebaseMessaging.instance.getInitialMessage();
     if (msg != null) {
-      print('LAUNCHED FROM NOTIF: data=${msg.data}');
+      ('LAUNCHED FROM NOTIF: data=${msg.data}');
     }
   }
 

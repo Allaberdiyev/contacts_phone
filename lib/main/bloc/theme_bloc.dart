@@ -1,8 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:contacts_phone/core/services/app_share_prefs.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
-
 
 part 'theme_event.dart';
 part 'theme_state.dart';
@@ -20,7 +18,10 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     emit(ThemeInitial(mode));
   }
 
-  Future<void> _onSetLight(SetLightTheme event, Emitter<ThemeState> emit) async {
+  Future<void> _onSetLight(
+    SetLightTheme event,
+    Emitter<ThemeState> emit,
+  ) async {
     await AppSharePrefs.saveThemeMode(ThemeMode.light);
     emit(ThemeInitial(ThemeMode.light));
   }
@@ -30,7 +31,10 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     emit(ThemeInitial(ThemeMode.dark));
   }
 
-  Future<void> _onSetSystem(SetSystemTheme event, Emitter<ThemeState> emit) async {
+  Future<void> _onSetSystem(
+    SetSystemTheme event,
+    Emitter<ThemeState> emit,
+  ) async {
     await AppSharePrefs.saveThemeMode(ThemeMode.system);
     emit(ThemeInitial(ThemeMode.system));
   }

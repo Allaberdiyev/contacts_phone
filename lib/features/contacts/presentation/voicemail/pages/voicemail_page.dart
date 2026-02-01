@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class VoicemailPage extends StatefulWidget {
-  const VoicemailPage({super.key});
+  final String title;
+  const VoicemailPage({super.key, required this.title});
 
   @override
   State<VoicemailPage> createState() => _VoicemailPageState();
