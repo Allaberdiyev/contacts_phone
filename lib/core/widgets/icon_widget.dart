@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+enum IconContentType { image, text }
+
 class IconWidget extends StatelessWidget {
-  final Image imege;
+  final IconContentType type;
+  final Image? image;
+  final String? text;
   final bool selected;
   final bool isDark;
   final VoidCallback onTap;
@@ -11,12 +15,14 @@ class IconWidget extends StatelessWidget {
 
   const IconWidget({
     super.key,
-    required this.imege,
+    required this.type,
+    this.image,
+    this.text,
     required this.selected,
     required this.isDark,
     required this.onTap,
     this.iconSize = 20,
-    this.fontSize = 100,
+    this.fontSize = 16,
     this.radius = 50,
   });
 
@@ -37,6 +43,22 @@ class IconWidget extends StatelessWidget {
           ]
         : const [];
 
+    Widget content;
+    if (type == IconContentType.image && image != null) {
+      content = SizedBox(width: iconSize, height: iconSize, child: image);
+    } else if (type == IconContentType.text && text != null) {
+      content = Text(
+        text!,
+        style: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: isDark ? Colors.white : Colors.black,
+        ),
+      );
+    } else {
+      content = const SizedBox();
+    }
+
     return Material(
       color: Colors.transparent,
       child: SizedBox(
@@ -52,12 +74,8 @@ class IconWidget extends StatelessWidget {
               color: bgColor,
               borderRadius: BorderRadius.circular(radius),
               boxShadow: shadow,
-              
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [imege],
-            ),
+            child: Center(child: content),
           ),
         ),
       ),

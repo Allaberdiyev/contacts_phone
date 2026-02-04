@@ -24,6 +24,8 @@ class App extends StatelessWidget {
         BlocProvider<BottomNavigationBloc>(
           create: (_) => getIt<BottomNavigationBloc>(),
         ),
+
+        BlocProvider<ThemeBloc>(create: (_) => getIt<ThemeBloc>()),
       ],
       child: MainPage(),
     );

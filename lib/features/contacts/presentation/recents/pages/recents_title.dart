@@ -1,18 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacts_phone/core/utils/colors/app_colors.dart';
-import 'package:contacts_phone/features/contacts/presentation/contacts/pages/conatact_details_page.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_bloc.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/add_contact_sheet.dart';
+import 'package:contacts_phone/features/contacts/presentation/recents/pages/recents_details_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/contacts_model.dart';
-import '../bloc/contacts_bloc.dart';
-import 'add_contact_sheet.dart';
 
-class ContactTile extends StatelessWidget {
+class RecentsTitle extends StatelessWidget {
   final ContactsModel contact;
 
-  const ContactTile({super.key, required this.contact});
+  const RecentsTitle({super.key, required this.contact});
 
   String get initials {
     final f = contact.firstName.trim();
@@ -68,7 +68,7 @@ class ContactTile extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => ContactDetailsPage(contact: contact),
+              builder: (_) => RecentsDetailsPage(contact: contact),
             ),
           );
         },
@@ -111,29 +111,3 @@ class ContactTile extends StatelessWidget {
     );
   }
 }
-
-//  trailing: CircleAvatar(
-//               backgroundColor: isDark
-//                   ? AppColors.darkgrey
-//                   : AppColors.whitegrey,
-//               child: IconButton(
-//                 icon: Icon(Icons.phone, color: AppColors.blue),
-//                 onPressed: () async {
-//                   final phone = contact.phoneNumber.replaceAll(
-//                     RegExp(r'[^0-9+]'),
-//                     '',
-//                   );
-//                   final uri = Uri(scheme: 'tel', path: phone);
-
-//                   final ok = await launchUrl(
-//                     uri,
-//                     mode: LaunchMode.externalApplication,
-//                   );
-//                   if (!ok && context.mounted) {
-//                     ScaffoldMessenger.of(context).showSnackBar(
-//                       const SnackBar(content: Text("Nomer ochilmadi")),
-//                     );
-//                   }
-//                 },
-//               ),
-//             ),

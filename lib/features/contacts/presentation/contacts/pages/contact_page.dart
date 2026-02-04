@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacts_phone/core/utils/colors/app_colors.dart';
 import 'package:contacts_phone/core/widgets/icon_widget.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_bloc.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/pages/conatact_details_page.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/add_contact_sheet.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/contact_title.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -25,7 +26,7 @@ class _ContactsPageState extends State<ContactsPage> {
   String _query = '';
 
   @override
-  void dispose() {                
+  void dispose() {
     _searchController.dispose();
     super.dispose();
   }
@@ -62,7 +63,8 @@ class _ContactsPageState extends State<ContactsPage> {
           children: [
             const SizedBox(width: 15),
             IconWidget(
-              imege: Image.asset(
+              type: IconContentType.image,
+              image: Image.asset(
                 isDark
                     ? "assets/pictures/white_back_icon.png"
                     : "assets/pictures/black_back_icon.png",
@@ -86,7 +88,9 @@ class _ContactsPageState extends State<ContactsPage> {
         ),
         actions: [
           IconWidget(
-            imege: Image.asset(
+            type: IconContentType.image,
+
+            image: Image.asset(
               isDark
                   ? "assets/pictures/white_plus_icon.png"
                   : "assets/pictures/black_plus_icon.png",
@@ -226,7 +230,20 @@ class _ContactsPageState extends State<ContactsPage> {
                       itemCount: filtered.length,
                       physics: const StopPhysics(),
                       itemBuilder: (context, index) {
-                        return ContactTile(contact: filtered[index]);
+                        final contact = filtered[index];
+
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    ContactDetailsPage(contact: contact),
+                              ),
+                            );
+                          },
+                          child: ContactTile(contact: contact),
+                        );
                       },
 
                       indexBarOptions: IndexBarOptions(
@@ -253,7 +270,7 @@ class _ContactsPageState extends State<ContactsPage> {
                         ),
                       ),
 
-                      indexHintBuilder: (_, __) => const SizedBox.shrink(),
+                      indexHintBuilder: (_, _) => const SizedBox.shrink(),
 
                       susItemBuilder: (context, index) {
                         final tag = filtered[index].getSuspensionTag();

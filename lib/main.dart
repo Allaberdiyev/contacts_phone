@@ -4,10 +4,12 @@ import 'package:contacts_phone/app/router.dart';
 import 'package:contacts_phone/core/services/app_share_prefs.dart';
 import 'package:contacts_phone/core/services/notificaxtion_service.dart';
 import 'package:contacts_phone/core/utils/colors/app_colors.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_bloc.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'firebase_options.dart';
 
@@ -94,7 +96,6 @@ class _MainAppState extends State<MainApp> {
       builder: (_, mode, _) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-
           theme: _lightTheme(),
           darkTheme: _darkTheme(),
           themeMode: mode,
@@ -104,7 +105,13 @@ class _MainAppState extends State<MainApp> {
           localizationsDelegates: context.localizationDelegates,
 
           initialRoute: Routers.contactsPage,
-          routes: {Routers.contactsPage: (_) => const App()},
+          routes: {
+            Routers.contactsPage: (_) => BlocProvider(
+              create: (_) => getIt<ContactBloc>(),
+              
+              child: const App(),
+            ),
+          },
         );
       },
     );
