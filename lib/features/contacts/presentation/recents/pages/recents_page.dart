@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacts_phone/core/utils/colors/app_colors.dart';
-import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_bloc.dart';
-import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/add_contact_sheet.dart';
+import 'package:contacts_phone/core/widgets/search_bar_widget.dart';
 import 'package:contacts_phone/features/contacts/presentation/recents/pages/recents_title.dart';
+import 'package:contacts_phone/features/contacts/presentation/recents/widgets/recents_segmented_button.dart';
 import 'package:contacts_phone/main.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/contacts_model.dart';
 
 class RecentsPage extends StatefulWidget {
@@ -18,102 +18,278 @@ class RecentsPage extends StatefulWidget {
 }
 
 class _RecentsPageState extends State<RecentsPage> {
+  final _searchCtrl = TextEditingController();
+  final _filterBtnKey = GlobalKey();
+
+  String _query = '';
+  int _segment = 0;
+
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: ValueListenableBuilder<ThemeMode>(
-            valueListenable: MainApp.themeNotifier,
-            builder: (context, mode, _) {
-              return Switch(
-                activeTrackColor: const Color(0xFF6A6A6A),
-                activeColor: const Color(0xFF414141),
-                value: mode == ThemeMode.dark,
-                onChanged: (isDark) async {
-                  await MainApp.setTheme(
-                    isDark ? ThemeMode.dark : ThemeMode.light,
-                  );
-                },
-              );
-            },
-          ),
-        ),
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
 
-        title: Text(
-          'contacts'.tr(),
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isDark ? AppColors.white : AppColors.dark,
-            letterSpacing: 2,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          PopupMenuButton<Locale>(
-            icon: Icon(
-              Icons.language,
-              color: isDark ? AppColors.white : AppColors.dark,
-            ),
-            onSelected: (locale) => context.setLocale(locale),
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: Locale('uz'), child: Text('UZ')),
-              PopupMenuItem(value: Locale('ru'), child: Text('RU')),
-              PopupMenuItem(value: Locale('en'), child: Text('EN')),
-            ],
-          ),
+  bool _match(ContactsModel c, String q) {
+    final s = q.trim().toLowerCase();
+    if (s.isEmpty) return true;
+    final name = '${c.firstName} ${c.lastName}'.trim().toLowerCase();
+    final phone = c.phoneNumber.toLowerCase();
+    return name.contains(s) || phone.contains(s);
+  }
 
-          IconButton(
-            icon: Icon(
-              Icons.add,
-              color: isDark ? AppColors.white : AppColors.dark,
-            ),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (_) {
-                  return BlocProvider.value(
-                    value: context.read<ContactBloc>(),
-                    child: const AddContactSheet(),
-                  );
-                },
-              );
-            },
+  PopupMenuItem<String> _menuItem({
+    required String value,
+    required IconData icon,
+    required String text,
+    required bool isDark,
+  }) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        children: [
+          Icon(icon, color: isDark ? Colors.white70 : Colors.black54, size: 20),
+          const SizedBox(width: 10),
+          Text(
+            text,
+            style: TextStyle(color: isDark ? Colors.white : Colors.black87),
           ),
         ],
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('contacts')
-            .orderBy('firstName')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    );
+  }
 
-          final docs = snapshot.data!.docs;
+  Future<void> _openTopMenu(BuildContext context) async {
+    final box = _filterBtnKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null) return;
 
-          if (docs.isEmpty) {
-            return Center(child: Text('no_contacts'.tr()));
-          }
+    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final pos = box.localToGlobal(Offset.zero, ancestor: overlay);
 
-          return ListView.separated(
-            itemCount: docs.length,
-            separatorBuilder: (_, _) => Divider(
-              height: 0,
-              color: isDark ? AppColors.grey : AppColors.greylight,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final selected = await showMenu<String>(
+      context: context,
+      color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+      elevation: 10,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      position: RelativeRect.fromLTRB(
+        pos.dx,
+        pos.dy + box.size.height + 8,
+        overlay.size.width - (pos.dx + box.size.width),
+        overlay.size.height,
+      ),
+      items: [
+        _menuItem(
+          value: 'theme',
+          icon: Icons.brightness_6_rounded,
+          text: 'Theme',
+          isDark: isDark,
+        ),
+        const PopupMenuDivider(height: 10),
+        _menuItem(
+          value: 'uz',
+          icon: Icons.language_rounded,
+          text: 'UZ',
+          isDark: isDark,
+        ),
+        _menuItem(
+          value: 'ru',
+          icon: Icons.language_rounded,
+          text: 'RU',
+          isDark: isDark,
+        ),
+        _menuItem(
+          value: 'en',
+          icon: Icons.language_rounded,
+          text: 'EN',
+          isDark: isDark,
+        ),
+      ],
+    );
+
+    if (!mounted || selected == null) return;
+
+    if (selected == 'theme') {
+      final cur = MainApp.themeNotifier.value;
+      await MainApp.setTheme(
+        cur == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark,
+      );
+      return;
+    }
+
+    if (selected == 'uz') await context.setLocale(const Locale('uz'));
+    if (selected == 'ru') await context.setLocale(const Locale('ru'));
+    if (selected == 'en') await context.setLocale(const Locale('en'));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final textMain = isDark ? Colors.white : Colors.black87;
+
+    final pillBg = isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7);
+    final pillBorder = isDark ? Colors.white24 : Colors.black26;
+
+    final segBg = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE5E5EA);
+
+    final dividerColor = isDark ? Colors.white12 : Colors.black12;
+
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(
+                horizontal: 15,
+                vertical: 8,
+              ),
+              child: Row(
+                children: [
+                  InkWell(
+                    onTap: () {},
+                    borderRadius: BorderRadius.circular(18),
+                    child: Container(
+                      height: 36,
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      decoration: BoxDecoration(
+                        color: pillBg,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: pillBorder, width: 1),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Edit',
+                        style: TextStyle(
+                          color: textMain,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: segBg,
+                      borderRadius: BorderRadius.circular(40),
+                      border: Border.all(color: pillBorder, width: 1),
+                    ),
+                    padding: const EdgeInsets.all(3),
+                    child: RecentsSegmentedButton(
+                      value: _segment,
+                      onChanged: (v) => setState(() => _segment = v),
+                      width: 130,
+                      height: 38,
+                      leftText: "All",
+                      rightText: "Missed",
+                    ),
+                  ),
+                  const Spacer(),
+                  InkWell(
+                    key: _filterBtnKey,
+                    onTap: () => _openTopMenu(context),
+                    borderRadius: BorderRadius.circular(50),
+                    child: Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: pillBg,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: pillBorder, width: 1),
+                      ),
+                      child: Icon(
+                        CupertinoIcons.line_horizontal_3_decrease,
+                        color: textMain,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            itemBuilder: (context, index) {
-              final data = docs[index].data() as Map<String, dynamic>;
-              final contact = ContactsModel.fromJson(data, docs[index].id);
-              return RecentsTitle(contact: contact);
-            },
-          );
-        },
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 2, 16, 10),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Recents',
+                  style: TextStyle(
+                    color: textMain,
+                    fontSize: 42,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.6,
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+              child: SearchBarWidget(
+                controller: _searchCtrl,
+                query: _query,
+                isDark: isDark,
+                onChanged: (v) => setState(() => _query = v),
+                onClear: () {
+                  _searchCtrl.clear();
+                  setState(() => _query = '');
+                },
+                onMic: () {},
+              ),
+            ),
+
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('contacts')
+                    .orderBy('firstName')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final docs = snapshot.data!.docs;
+                  if (docs.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'no_contacts'.tr(),
+                        style: TextStyle(color: textMain),
+                      ),
+                    );
+                  }
+
+                  final list = docs
+                      .map(
+                        (d) => ContactsModel.fromJson(
+                          d.data() as Map<String, dynamic>,
+                          d.id,
+                        ),
+                      )
+                      .where((c) => _match(c, _query))
+                      .toList();
+
+                  return ListView.separated(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    itemCount: list.length,
+                    separatorBuilder: (_, __) => Divider(
+                      height: 1,
+                      thickness: 0.6,
+                      color: dividerColor,
+                      indent: 76,
+                      endIndent: 0,
+                    ),
+                    itemBuilder: (context, index) =>
+                        RecentsTitle(contact: list[index]),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

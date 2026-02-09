@@ -2,6 +2,7 @@ import 'package:azlistview/azlistview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacts_phone/core/utils/colors/app_colors.dart';
 import 'package:contacts_phone/core/widgets/icon_widget.dart';
+import 'package:contacts_phone/core/widgets/search_bar_widget.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_bloc.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/pages/conatact_details_page.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/add_contact_sheet.dart';
@@ -21,7 +22,6 @@ class ContactsPage extends StatefulWidget {
 
 class _ContactsPageState extends State<ContactsPage> {
   List<ContactsModel> _contacts = [];
-
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
 
@@ -38,17 +38,22 @@ class _ContactsPageState extends State<ContactsPage> {
     final name = '${contacts.firstName} ${contacts.lastName}'
         .trim()
         .toLowerCase();
-    final phone = (contacts.phoneNumber).toString().toLowerCase();
+    final phone = contacts.phoneNumber.toLowerCase();
 
     return name.contains(query) || phone.contains(query);
   }
+
+  double _dividerIndent(BuildContext context) => 76;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: isDark ? AppColors.dark : Colors.white,
       appBar: AppBar(
+        backgroundColor: isDark ? AppColors.dark : Colors.white,
+        elevation: 0,
         title: Text(
           'contacts'.tr(),
           style: TextStyle(
@@ -89,7 +94,6 @@ class _ContactsPageState extends State<ContactsPage> {
         actions: [
           IconWidget(
             type: IconContentType.image,
-
             image: Image.asset(
               isDark
                   ? "assets/pictures/white_plus_icon.png"
@@ -113,7 +117,6 @@ class _ContactsPageState extends State<ContactsPage> {
           const SizedBox(width: 16),
         ],
       ),
-
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('contacts')
@@ -157,70 +160,16 @@ class _ContactsPageState extends State<ContactsPage> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                    child: Container(
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF1C1C1E)
-                            : const Color(0xFFF2F2F7),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 12),
-                          Icon(
-                            Icons.search,
-                            color: isDark ? Colors.white54 : Colors.black45,
-                            size: 22,
-                          ),
-                          const SizedBox(width: 8),
-
-                          Expanded(
-                            child: TextField(
-                              controller: _searchController,
-                              onChanged: (v) => setState(() => _query = v),
-                              style: TextStyle(
-                                color: isDark ? Colors.white : Colors.black,
-                                fontSize: 16,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: 'Search',
-                                hintStyle: TextStyle(
-                                  color: isDark
-                                      ? Colors.white38
-                                      : Colors.black38,
-                                ),
-                                border: InputBorder.none,
-                                isDense: true,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          if (_query.isNotEmpty)
-                            IconButton(
-                              onPressed: () {
-                                _searchController.clear();
-                                setState(() => _query = '');
-                              },
-                              icon: Icon(
-                                Icons.close,
-                                size: 20,
-                                color: isDark ? Colors.white54 : Colors.black45,
-                              ),
-                            ),
-
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.mic,
-                              color: isDark ? Colors.white70 : Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
+                    child: SearchBarWidget(
+                      controller: _searchController,
+                      query: _query,
+                      isDark: isDark,
+                      onChanged: (v) => setState(() => _query = v),
+                      onClear: () {
+                        _searchController.clear();
+                        setState(() => _query = '');
+                      },
+                      onMic: () {},
                     ),
                   ),
 
@@ -232,20 +181,45 @@ class _ContactsPageState extends State<ContactsPage> {
                       itemBuilder: (context, index) {
                         final contact = filtered[index];
 
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    ContactDetailsPage(contact: contact),
+                        final isLast = index == filtered.length - 1;
+                        final currentTag = contact.getSuspensionTag();
+                        final nextTag = !isLast
+                            ? filtered[index + 1].getSuspensionTag()
+                            : null;
+                        final needLongDivider =
+                            !isLast && nextTag != currentTag;
+
+                        final dividerColor = isDark
+                            ? Colors.white12
+                            : Colors.black12;
+
+                        return Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        ContactDetailsPage(contact: contact),
+                                  ),
+                                );
+                              },
+                              child: ContactTile(contact: contact),
+                            ),
+                            if (!isLast)
+                              Divider(
+                                height: 1,
+                                thickness: 0.6,
+                                color: dividerColor,
+                                indent: needLongDivider
+                                    ? 0
+                                    : _dividerIndent(context),
+                                endIndent: 0,
                               ),
-                            );
-                          },
-                          child: ContactTile(contact: contact),
+                          ],
                         );
                       },
-
                       indexBarOptions: IndexBarOptions(
                         textStyle: TextStyle(
                           color: AppColors.blue,
@@ -269,25 +243,40 @@ class _ContactsPageState extends State<ContactsPage> {
                           fontSize: 0,
                         ),
                       ),
-
                       indexHintBuilder: (_, _) => const SizedBox.shrink(),
-
                       susItemBuilder: (context, index) {
                         final tag = filtered[index].getSuspensionTag();
-                        return Container(
-                          height: 40,
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          color: isDark ? AppColors.dark : AppColors.whitegrey,
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            tag,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.greylight,
+                        final dividerColor = isDark
+                            ? Colors.white12
+                            : Colors.black12;
+
+                        return Column(
+                          children: [
+                            Container(
+                              height: 40,
+                              width: MediaQuery.of(context).size.width,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              color: isDark ? AppColors.dark : Colors.white,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                tag,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.greylight,
+                                ),
+                              ),
                             ),
-                          ),
+                            Divider(
+                              height: 1,
+                              thickness: 1,
+                              color: dividerColor,
+                              indent: 0,
+                              endIndent: 0,
+                            ),
+                          ],
                         );
                       },
                     ),
@@ -325,9 +314,7 @@ class StopPhysics extends ScrollPhysics {
   Simulation? createBallisticSimulation(
     ScrollMetrics position,
     double velocity,
-  ) {
-    return null;
-  }
+  ) => null;
 
   @override
   double applyBoundaryConditions(ScrollMetrics position, double value) {
@@ -335,22 +322,18 @@ class StopPhysics extends ScrollPhysics {
         position.pixels <= position.minScrollExtent) {
       return value - position.pixels;
     }
-
     if (position.maxScrollExtent <= position.pixels &&
         position.pixels < value) {
       return value - position.pixels;
     }
-
     if (value < position.minScrollExtent &&
         position.minScrollExtent < position.pixels) {
       return value - position.minScrollExtent;
     }
-
     if (position.pixels < position.maxScrollExtent &&
         position.maxScrollExtent < value) {
       return value - position.maxScrollExtent;
     }
-
     return 0.0;
   }
 }

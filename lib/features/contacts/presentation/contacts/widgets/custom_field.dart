@@ -34,7 +34,6 @@ class CustomField extends StatelessWidget {
         inputFormatters: inputFormatters ?? [],
         validator: validator,
         textCapitalization: TextCapitalization.words,
-        cursorErrorColor: AppColors.red,
         cursorColor: isDark ? AppColors.white : AppColors.greydark,
         decoration: InputDecoration(
           hintText: hintText,
@@ -59,11 +58,9 @@ class CustomField extends StatelessWidget {
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.red),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.red),
           ),
         ),
       ),

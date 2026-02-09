@@ -23,7 +23,7 @@ class MainPage extends StatelessWidget {
       const FavoritePage(title: "Favorites"),
       const RecentsPage(title: "Recents"),
       const ContactsPage(title: "Contacts"),
-      const KeypadPage(title: "Keypad"),
+      const KeypadPage(),
       const VoicemailPage(title: "Voicemail"),
     ];
 

@@ -16,9 +16,9 @@ class AppColors {
 
 class ContactDetailsTheme {
   static const List<Color> backgroundColors = [
-    Color(0xFF8E99A5),
-    Color(0xFF75718C),
-    Color(0xFF595171),
+    Color(0xFF524E66),
+    Color(0xFF544D80),
+    Color(0xFF584E77),
     Color(0xFF221E38),
   ];
 

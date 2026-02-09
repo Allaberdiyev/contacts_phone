@@ -43,7 +43,8 @@ class ContactTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final fullName = '${contact.firstName} ${contact.lastName}'.trim();
     final hasName = fullName.isNotEmpty;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    const tileBg = Color(0xFF000000);
 
     return CupertinoContextMenu(
       actions: [
@@ -75,32 +76,24 @@ class ContactTile extends StatelessWidget {
         child: SizedBox(
           width: MediaQuery.sizeOf(context).width,
           child: Material(
-            color: isDark ? AppColors.dark : AppColors.whitegrey,
+            color: tileBg,
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 6,
               ),
-              leading: CircleAvatar(
-                radius: 22,
-                backgroundImage: contact.imageUrl.isNotEmpty
-                    ? NetworkImage(contact.imageUrl)
-                    : null,
-                child: contact.imageUrl.isEmpty
-                    ? Text(
-                        initials.isEmpty ? ' ' : initials,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? AppColors.white : AppColors.dark,
-                        ),
-                      )
-                    : null,
+
+              leading: IosAvatar(
+                size: 44,
+                initials: initials,
+                imageUrl: contact.imageUrl,
               ),
+
               title: Text(
                 hasName ? fullName : contact.phoneNumber,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
-                  color: isDark ? AppColors.white : AppColors.dark,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -112,28 +105,76 @@ class ContactTile extends StatelessWidget {
   }
 }
 
-//  trailing: CircleAvatar(
-//               backgroundColor: isDark
-//                   ? AppColors.darkgrey
-//                   : AppColors.whitegrey,
-//               child: IconButton(
-//                 icon: Icon(Icons.phone, color: AppColors.blue),
-//                 onPressed: () async {
-//                   final phone = contact.phoneNumber.replaceAll(
-//                     RegExp(r'[^0-9+]'),
-//                     '',
-//                   );
-//                   final uri = Uri(scheme: 'tel', path: phone);
+class IosAvatar extends StatelessWidget {
+  final double size;
+  final String initials;
+  final String imageUrl;
 
-//                   final ok = await launchUrl(
-//                     uri,
-//                     mode: LaunchMode.externalApplication,
-//                   );
-//                   if (!ok && context.mounted) {
-//                     ScaffoldMessenger.of(context).showSnackBar(
-//                       const SnackBar(content: Text("Nomer ochilmadi")),
-//                     );
-//                   }
-//                 },
-//               ),
-//             ),
+  const IosAvatar({
+    super.key,
+    required this.size,
+    required this.initials,
+    required this.imageUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (imageUrl.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(
+          imageUrl,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) => _fallback(),
+        ),
+      );
+    }
+    return _fallback();
+  }
+
+  Widget _fallback() {
+    final color1 = ContactDetailsTheme.backgroundColors[1];
+    final color2 = ContactDetailsTheme.backgroundColors[3];
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: ClipOval(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [color1, color2],
+                ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: const Alignment(-0.55, -0.6),
+                  radius: 1.1,
+                  colors: [Colors.white.withOpacity(0.22), Colors.transparent],
+                ),
+              ),
+            ),
+            Center(
+              child: Text(
+                initials.isEmpty ? ' ' : initials,
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: size * 0.36,
+                  color: AppColors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
