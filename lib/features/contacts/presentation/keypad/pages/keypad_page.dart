@@ -1,7 +1,20 @@
+import 'package:contacts_phone/features/contacts/presentation/keypad/widgets/create_open.dart';
+import 'package:contacts_phone/features/contacts/presentation/keypad/widgets/dial_displey.dart';
+import 'package:contacts_phone/features/contacts/presentation/keypad/widgets/dial_pad.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:contacts_phone/core/widgets/icon_widget.dart';
+import 'package:contacts_phone/features/contacts/data/models/contacts_model.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_bloc.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_state.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/pages/conatact_details_page.dart';
+
+import '../utils/dial_search.dart';
+import '../utils/phone_format.dart';
+import '../widgets/call_row.dart';
+import '../widgets/search_bubble.dart';
 
 class KeypadPage extends StatefulWidget {
   final double bottomOverlay;
@@ -13,245 +26,163 @@ class KeypadPage extends StatefulWidget {
 }
 
 class _KeypadPageState extends State<KeypadPage> {
-  String digits = '';
+  String dial = '';
   static const int maxDigits = 15;
 
-  void _tap(String v) {
-    if (!RegExp(r'^\d$').hasMatch(v)) {
+  List<ContactsModel> _contactsFromState(ContactState state) {
+    try {
+      final s = state as dynamic;
+      final dynamic raw =
+          s.contacts ?? s.contactList ?? s.items ?? s.data ?? s.list;
+      if (raw is List<ContactsModel>) return raw;
+      if (raw is List) return raw.whereType<ContactsModel>().toList();
+      return <ContactsModel>[];
+    } catch (_) {
+      return <ContactsModel>[];
+    }
+  }
+
+  int _digitsCount() => PhoneFormat.digitsOnly(dial).length;
+
+  void _append(String v) {
+    final isDigit = RegExp(r'^\d$').hasMatch(v);
+    if (isDigit) {
+      if (_digitsCount() >= maxDigits) {
+        HapticFeedback.lightImpact();
+        return;
+      }
       HapticFeedback.lightImpact();
+      setState(() => dial += v);
       return;
     }
-    if (digits.length >= maxDigits) {
+
+    if (v == '*' || v == '#' || v == '+') {
       HapticFeedback.lightImpact();
+      setState(() => dial += v);
       return;
     }
+
     HapticFeedback.lightImpact();
-    setState(() => digits += v);
   }
 
   void _backspace() {
-    if (digits.isEmpty) return;
+    if (dial.isEmpty) return;
     HapticFeedback.lightImpact();
-    setState(() => digits = digits.substring(0, digits.length - 1));
+    setState(() => dial = dial.substring(0, dial.length - 1));
   }
 
   void _clearAll() {
-    if (digits.isEmpty) return;
+    if (dial.isEmpty) return;
     HapticFeedback.mediumImpact();
-    setState(() => digits = '');
+    setState(() => dial = '');
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
 
-    final side = 70.0;
-    final spaceWith = 40.0;
-    final spaceHieght = 15.0;
+    final side = (size.width * 0.2);
+    final spaceWith = (size.width * 0.1);
+    final spaceHeight = (size.height * 0.018);
 
-    final availableW = size.width - side * 2;
-    final diameter = (availableW - spaceWith * 2) / 3;
-    final callDiameter = diameter * 0.9;
+    final availableW = size.width - side * 2.3;
+    final diameter = ((availableW - spaceWith * 0.4) / 3);
+    final callDiameter = (diameter * 0.92);
 
-    final display = PhoneFormat.last9UzHyphen(digits);
-    final topH = (size.height * 0.18).clamp(70.0, 120.0);
+    final topH = (size.height * 0.2);
 
-    Widget key(String t, String sub) {
-      final showSub = sub.isNotEmpty;
+    final qDigits = PhoneFormat.digitsOnly(dial);
+    final display = PhoneFormat.displayText(dial);
 
-      final titleSize = (diameter * 0.42).clamp(26.0, 44.0);
-      final subSize = (diameter * 0.13).clamp(9.0, 12.0);
+    return BlocBuilder<ContactBloc, ContactState>(
+      builder: (context, state) {
+        final contacts = _contactsFromState(state);
 
-      return GestureDetector(
-        onTap: () => _tap(t),
-        child: Container(
-          width: diameter,
-          height: diameter,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white.withOpacity(0.08),
-            border: Border.all(color: Colors.white.withOpacity(0.07)),
-          ),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+        final matches = DialSearch.searchContacts(
+          contacts: contacts,
+          queryDigits: qDigits,
+        );
+
+        final isSavedExact = DialSearch.isSavedUz9(
+          contacts: contacts,
+          inputDigits: qDigits,
+          getPhone: (c) => c.phoneNumber,
+        );
+
+        final showAdd = qDigits.isNotEmpty && !isSavedExact;
+
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: SafeArea(
+            child: Stack(
               children: [
-                Text(
-                  t,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: titleSize,
-                    fontWeight: FontWeight.w700,
+                Column(
+                  children: [
+                    DialDisplay(height: topH, side: side, text: display),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 180),
+                      child: matches.isEmpty
+                          ? const SizedBox(height: 70)
+                          : Padding(
+                              padding: EdgeInsets.symmetric(horizontal: side),
+                              child: SearchBubble(
+                                contact: matches.first,
+                                total: matches.length,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => ContactDetailsPage(
+                                        contact: matches.first,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                    ),
+                    const Spacer(),
+                    DialPad(
+                      diameter: diameter,
+                      spaceWith: spaceWith,
+                      spaceHeight: spaceHeight,
+                      onKey: _append,
+                    ),
+                    SizedBox(height: spaceHeight * 1),
+                    CallRow(
+                      diameter: diameter,
+                      callDiameter: callDiameter,
+                      dial: dial,
+                      showBackspace: dial.isNotEmpty,
+                      onBackspace: _backspace,
+                      onClearAll: _clearAll,
+                    ),
+                  ],
+                ),
+
+                Positioned(
+                  top: 6,
+                  right: side - 70,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 160),
+                    child: showAdd
+                        ? IconButton(
+                            key: const ValueKey('add'),
+                            icon: const Icon(
+                              CupertinoIcons.person_crop_circle_badge_plus,
+                              color: Colors.white,
+                              size: 32,
+                            ),
+                            onPressed: () => openCreateNew(context, qDigits),
+                          )
+                        : const SizedBox(width: 44, height: 44),
                   ),
                 ),
-                if (showSub)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(
-                      sub,
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.75),
-                        fontSize: subSize,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.4,
-                      ),
-                    ),
-                  ),
               ],
             ),
           ),
-        ),
-      );
-    }
-
-    Widget row3(Widget a, Widget b, Widget c) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          a,
-          SizedBox(width: spaceWith),
-          b,
-          SizedBox(width: spaceWith),
-          c,
-        ],
-      );
-    }
-
-    final backspace = AnimatedSwitcher(
-      duration: const Duration(milliseconds: 1),
-      child: digits.isEmpty
-          ? const SizedBox(width: 1, height: 1, key: ValueKey('no_bs'))
-          : GestureDetector(
-              onTap: _backspace,
-              onLongPress: _clearAll,
-              child: SizedBox(
-                width: 10,
-                height: 10,
-
-                child: const Icon(
-                  Icons.backspace_outlined,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+        );
+      },
     );
-
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 30),
-          child: Column(
-            children: [
-              SizedBox(
-                height: topH,
-                width: double.infinity,
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: side),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.center,
-                      child: Text(
-                        display,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 44,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.1,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              row3(key('1', ''), key('2', 'ABC'), key('3', 'DEF')),
-              SizedBox(height: spaceHieght),
-              row3(key('4', 'GHI'), key('5', 'JKL'), key('6', 'MNO')),
-              SizedBox(height: spaceHieght),
-              row3(key('7', 'PQRS'), key('8', 'TUV'), key('9', 'WXYZ')),
-              SizedBox(height: spaceHieght),
-              row3(
-                GestureDetector(
-                  onTap: () => HapticFeedback.lightImpact(),
-                  child: key('*', ''),
-                ),
-                key('0', '+'),
-                GestureDetector(
-                  onTap: () => HapticFeedback.lightImpact(),
-                  child: key('#', ''),
-                ),
-              ),
-              SizedBox(height: spaceHieght * 1.6),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(width: diameter, height: diameter),
-                  SizedBox(
-                    width: callDiameter,
-                    height: callDiameter,
-                    child: Material(
-                      color: const Color(0xFF178A3A),
-                      shape: const CircleBorder(),
-                      child: InkWell(
-                        customBorder: const CircleBorder(),
-                        onTap: () => debugPrint('CALL: $digits'),
-                        child: Center(
-                          child: IconWidget(
-                            type: IconContentType.image,
-                            image: Image.asset(
-                              'assets/pictures/phone_icon.png',
-                              fit: BoxFit.contain,
-                              color: Colors.white,
-                            ),
-                            selected: false,
-                            isDark: true,
-                            onTap: () {},
-                            iconSize: (callDiameter * 0.35).clamp(22.0, 34.0),
-                            radius: 50,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: diameter,
-                    height: diameter,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: backspace,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PhoneFormat {
-  static String last9UzHyphen(String input) {
-    final d = input.replaceAll(RegExp(r'\D'), '');
-    if (d.isEmpty) return '';
-    if (d.length <= 9) return _uz9(d);
-
-    final prefix = d.substring(0, d.length - 9);
-    final last9 = d.substring(d.length - 9);
-    return '$prefix-${_uz9(last9)}';
-  }
-
-  static String _uz9(String nine) {
-    final n = nine;
-    if (n.length <= 2) return n;
-    if (n.length <= 5) return '${n.substring(0, 2)}-${n.substring(2)}';
-    if (n.length <= 7) {
-      return '${n.substring(0, 2)}-${n.substring(2, 5)}-${n.substring(5)}';
-    }
-    return '${n.substring(0, 2)}-${n.substring(2, 5)}-${n.substring(5, 7)}-${n.substring(7)}';
   }
 }

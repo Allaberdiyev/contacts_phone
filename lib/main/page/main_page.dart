@@ -22,7 +22,7 @@ class MainPage extends StatelessWidget {
     final pages = <Widget>[
       const FavoritePage(title: "Favorites"),
       const RecentsPage(title: "Recents"),
-      const ContactsPage(title: "Contacts"),
+      const ContactsPage(title: "Contacts",),
       const KeypadPage(),
       const VoicemailPage(title: "Voicemail"),
     ];
