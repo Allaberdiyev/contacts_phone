@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,8 +18,7 @@ void openCreateNew(BuildContext context, String digitsOnly) {
     barrierDismissible: true,
     barrierLabel: 'create',
     barrierColor: Colors.transparent,
-    transitionDuration: const Duration(milliseconds: 140),
-    pageBuilder: (dialogContext, __, ___) {
+    pageBuilder: (dialogContext, _, _) {
       return _CreateOpenDialog(
         onCreate: () {
           Navigator.pop(dialogContext);
@@ -55,7 +55,14 @@ class _CreateOpenDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
     final top = MediaQuery.paddingOf(context).top;
+
+    final cardBg = p.surface;        
+    final cardBorder = p.separator;  
+    final iconBg = p.surface2;       
+    final iconColor = p.text;        
+    final textColor = p.text;        
 
     return Material(
       color: Colors.transparent,
@@ -76,9 +83,9 @@ class _CreateOpenDialog extends StatelessWidget {
                 child: Container(
                   width: 280,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.10),
+                    color: cardBg,
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: Colors.white.withOpacity(0.08)),
+                    border: Border.all(color: cardBorder),
                   ),
                   child: Material(
                     color: Colors.transparent,
@@ -97,12 +104,12 @@ class _CreateOpenDialog extends StatelessWidget {
                               width: 34,
                               height: 34,
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.12),
+                                color: iconBg,
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
                                 CupertinoIcons.person_badge_plus,
-                                color: Colors.white.withOpacity(0.92),
+                                color: iconColor,
                                 size: 18,
                               ),
                             ),
@@ -111,7 +118,7 @@ class _CreateOpenDialog extends StatelessWidget {
                               child: Text(
                                 'Create New Contact',
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity(0.92),
+                                  color: textColor,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
                                 ),

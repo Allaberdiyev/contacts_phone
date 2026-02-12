@@ -1,3 +1,4 @@
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 
 class DialDisplay extends StatelessWidget {
@@ -14,6 +15,8 @@ class DialDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
     return SizedBox(
       height: height,
       width: double.infinity,
@@ -26,8 +29,8 @@ class DialDisplay extends StatelessWidget {
             child: Text(
               text,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: p.text, 
                 fontSize: 44,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.1,

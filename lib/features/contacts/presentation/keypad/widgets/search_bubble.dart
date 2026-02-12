@@ -1,10 +1,9 @@
 import 'dart:ui';
-
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:contacts_phone/features/contacts/data/models/contacts_model.dart';
-
 import '../utils/phone_format.dart';
 
 class SearchBubble extends StatelessWidget {
@@ -21,6 +20,8 @@ class SearchBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
     final name = ('${contact.firstName} ${contact.lastName}').trim();
     final title = name.isEmpty ? contact.phoneNumber : name;
     final phone = PhoneFormat.formatUzWithCountry(contact.phoneNumber);
@@ -35,9 +36,9 @@ class SearchBubble extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.09),
+              color: p.searchBubbleBg,
               borderRadius: BorderRadius.circular(26),
-              border: Border.all(color: Colors.white.withOpacity(0.06)),
+              border: Border.all(color: p.searchBubbleBorder),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -48,13 +49,13 @@ class SearchBubble extends StatelessWidget {
                       width: 30,
                       height: 30,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.10),
+                        color: p.searchBubbleAvatarBg,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         CupertinoIcons.person_fill,
                         size: 16,
-                        color: Colors.white.withOpacity(0.9),
+                        color: p.searchBubbleTitle,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -67,7 +68,7 @@ class SearchBubble extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.92),
+                                color: p.searchBubbleTitle,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -80,7 +81,7 @@ class SearchBubble extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.55),
+                                color: p.searchBubbleSub,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -93,20 +94,20 @@ class SearchBubble extends StatelessWidget {
                 ),
                 if (total > 1) ...[
                   const SizedBox(height: 12),
-                  Divider(height: 1, color: Colors.white.withOpacity(0.10)),
+                  Divider(height: 1, color: p.searchBubbleDivider),
                   const SizedBox(height: 12),
                   Row(
                     children: [
                       Icon(
                         CupertinoIcons.search,
                         size: 18,
-                        color: Colors.white.withOpacity(0.65),
+                        color: p.searchBubbleSub,
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        '${total - 1} More Results',
+                        'More Results',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.65),
+                          color: p.searchBubbleSub,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                         ),

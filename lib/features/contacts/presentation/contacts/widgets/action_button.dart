@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 
 class IosActionButton extends StatelessWidget {
@@ -15,8 +16,10 @@ class IosActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = enabled ? Colors.white.withOpacity(0.10) : Colors.white.withOpacity(0.06);
-    final ic = enabled ? Colors.white.withOpacity(0.95) : Colors.white.withOpacity(0.35);
+    final p = AppColors.of(context);
+
+    final bg = enabled ? p.actionBtnBg : p.actionBtnBgDisabled;
+    final ic = enabled ? p.actionBtnIcon : p.actionBtnIconDisabled;
 
     return GestureDetector(
       onTap: enabled ? onTap : null,
@@ -28,7 +31,7 @@ class IosActionButton extends StatelessWidget {
             height: 64,
             decoration: BoxDecoration(
               color: bg,
-              border: Border.all(color: Colors.white.withOpacity(0.10)),
+              border: Border.all(color: p.actionBtnBorder),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: ic, size: 28),

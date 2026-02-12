@@ -1,3 +1,4 @@
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 
 enum IconContentType { image, text }
@@ -28,9 +29,9 @@ class IconWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color bgColor = selected
-        ? (isDark ? Colors.white.withAlpha(30) : Colors.black.withAlpha(20))
-        : Colors.transparent;
+    final p = AppColors.of(context);
+
+    final Color bgColor = selected ? p.navSelected : p.transparent;
 
     final List<BoxShadow> shadow = selected
         ? [
@@ -38,7 +39,7 @@ class IconWidget extends StatelessWidget {
               blurRadius: 100,
               spreadRadius: 0,
               offset: const Offset(0, 6),
-              color: Colors.black.withAlpha(isDark ? 90 : 35),
+              color: p.navShadow,
             ),
           ]
         : const [];
@@ -52,24 +53,22 @@ class IconWidget extends StatelessWidget {
         style: TextStyle(
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
-          color: isDark ? Colors.white : Colors.black,
+          color: p.text,
         ),
       );
     } else {
-      content = const SizedBox();
+      content = const SizedBox.shrink();
     }
 
     return Material(
-      color: Colors.transparent,
+      color: p.transparent,
       child: SizedBox(
         width: 45,
         height: 45,
         child: InkWell(
           borderRadius: BorderRadius.circular(radius),
           onTap: onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
+          child: Container(
             decoration: BoxDecoration(
               color: bgColor,
               borderRadius: BorderRadius.circular(radius),

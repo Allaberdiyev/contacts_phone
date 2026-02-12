@@ -1,4 +1,4 @@
-import 'package:contacts_phone/core/utils/colors/app_colors.dart';
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 
 class Background extends StatelessWidget {
@@ -16,14 +16,11 @@ class Background extends StatelessWidget {
         ),
       ),
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: const Alignment(0, 0.25),
+            begin: Alignment(0, 0.25),
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.transparent,
-              ContactDetailsTheme.glassColor.withOpacity(0.20),
-            ],
+            colors: [Colors.transparent, Color(0x330A0814)],
           ),
         ),
       ),

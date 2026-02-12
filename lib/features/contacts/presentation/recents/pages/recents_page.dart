@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:contacts_phone/core/utils/colors/app_colors.dart';
+import 'package:contacts_phone/app/theme.dart';
 import 'package:contacts_phone/core/widgets/search_bar_widget.dart';
-import 'package:contacts_phone/features/contacts/presentation/recents/pages/recents_title.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/contact_title.dart';
 import 'package:contacts_phone/features/contacts/presentation/recents/widgets/recents_segmented_button.dart';
 import 'package:contacts_phone/main.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import '../../../data/models/contacts_model.dart';
 
 class RecentsPage extends StatefulWidget {
@@ -39,21 +40,20 @@ class _RecentsPageState extends State<RecentsPage> {
   }
 
   PopupMenuItem<String> _menuItem({
+    required BuildContext context,
     required String value,
     required IconData icon,
     required String text,
-    required bool isDark,
   }) {
+    final p = AppColors.of(context);
+
     return PopupMenuItem<String>(
       value: value,
       child: Row(
         children: [
-          Icon(icon, color: isDark ? Colors.white70 : Colors.black54, size: 20),
+          Icon(icon, color: p.text2, size: 20),
           const SizedBox(width: 10),
-          Text(
-            text,
-            style: TextStyle(color: isDark ? Colors.white : Colors.black87),
-          ),
+          Text(text, style: TextStyle(color: p.text)),
         ],
       ),
     );
@@ -66,11 +66,12 @@ class _RecentsPageState extends State<RecentsPage> {
     final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
     final pos = box.localToGlobal(Offset.zero, ancestor: overlay);
 
+    final p = AppColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final selected = await showMenu<String>(
       context: context,
-      color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+      color: isDark ? p.surface2 : p.bg,
       elevation: 10,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       position: RelativeRect.fromLTRB(
@@ -81,29 +82,29 @@ class _RecentsPageState extends State<RecentsPage> {
       ),
       items: [
         _menuItem(
+          context: context,
           value: 'theme',
           icon: Icons.brightness_6_rounded,
           text: 'Theme',
-          isDark: isDark,
         ),
         const PopupMenuDivider(height: 10),
         _menuItem(
+          context: context,
           value: 'uz',
           icon: Icons.language_rounded,
           text: 'UZ',
-          isDark: isDark,
         ),
         _menuItem(
+          context: context,
           value: 'ru',
           icon: Icons.language_rounded,
           text: 'RU',
-          isDark: isDark,
         ),
         _menuItem(
+          context: context,
           value: 'en',
           icon: Icons.language_rounded,
           text: 'EN',
-          isDark: isDark,
         ),
       ],
     );
@@ -125,26 +126,22 @@ class _RecentsPageState extends State<RecentsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final textMain = isDark ? Colors.white : Colors.black87;
+    final textMain = p.text;
 
-    final pillBg = isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7);
-    final pillBorder = isDark ? Colors.white24 : Colors.black26;
+    final pillBg = isDark ? p.surface2 : p.surface;
+    final pillBorder = p.keypadBorder;
 
-    final segBg = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFE5E5EA);
-
-    final dividerColor = isDark ? Colors.white12 : Colors.black12;
+    final dividerColor = p.keypadBorder;
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsetsGeometry.symmetric(
-                horizontal: 15,
-                vertical: 8,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
               child: Row(
                 children: [
                   InkWell(
@@ -169,24 +166,20 @@ class _RecentsPageState extends State<RecentsPage> {
                       ),
                     ),
                   ),
+
                   const Spacer(),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: segBg,
-                      borderRadius: BorderRadius.circular(40),
-                      border: Border.all(color: pillBorder, width: 1),
-                    ),
-                    padding: const EdgeInsets.all(3),
-                    child: RecentsSegmentedButton(
-                      value: _segment,
-                      onChanged: (v) => setState(() => _segment = v),
-                      width: 130,
-                      height: 38,
-                      leftText: "All",
-                      rightText: "Missed",
-                    ),
+
+                  RecentsSegmentedButton(
+                    value: _segment,
+                    onChanged: (v) => setState(() => _segment = v),
+                    width: 160,
+                    height: 38,
+                    leftText: "All",
+                    rightText: "Missed",
                   ),
+
                   const Spacer(),
+
                   InkWell(
                     key: _filterBtnKey,
                     onTap: () => _openTopMenu(context),
@@ -283,7 +276,7 @@ class _RecentsPageState extends State<RecentsPage> {
                       endIndent: 0,
                     ),
                     itemBuilder: (context, index) =>
-                        RecentsTitle(contact: list[index]),
+                        ContactTile(contact: list[index]),
                   );
                 },
               ),

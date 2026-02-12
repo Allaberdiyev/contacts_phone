@@ -1,3 +1,4 @@
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -39,18 +40,24 @@ class CallRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
     final bsSize = (diameter * 0.60);
     final iconSize = (callDiameter * 0.40);
+
+    final callBg = p.callGreen;
+    final callIconColor = p.text;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(width: diameter, height: diameter),
+
         SizedBox(
           width: callDiameter,
           height: callDiameter,
           child: Material(
-            color: const Color(0xFF178A3A),
+            color: callBg,
             shape: const CircleBorder(),
             child: InkWell(
               customBorder: const CircleBorder(),
@@ -64,39 +71,33 @@ class CallRow extends StatelessWidget {
                     image: Image.asset(
                       'assets/pictures/phone_icon.png',
                       fit: BoxFit.cover,
-                      color: Colors.white,
+                      color: callIconColor,
                     ),
                     selected: false,
-                    isDark: true,
+                    isDark: Theme.of(context).brightness == Brightness.dark,
                     onTap: () => _call(context),
                     iconSize: iconSize,
-                    radius: 999,
+                    radius: 50,
                   ),
                 ),
               ),
             ),
           ),
         ),
+
         SizedBox(
           width: diameter,
           height: diameter,
           child: Align(
             alignment: Alignment.centerRight,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 160),
-              child: showBackspace
-                  ? BackspaceButton(
-                      key: const ValueKey('bs'),
-                      size: bsSize,
-                      onTap: onBackspace,
-                      onLongPress: onClearAll,
-                    )
-                  : const SizedBox(
-                      key: ValueKey('no_bs'),
-                      width: 56,
-                      height: 56,
-                    ),
-            ),
+            child: showBackspace
+                ? BackspaceButton(
+                    key: const ValueKey('bs'),
+                    size: bsSize,
+                    onTap: onBackspace,
+                    onLongPress: onClearAll,
+                  )
+                : const SizedBox(key: ValueKey('no_bs'), width: 56, height: 56),
           ),
         ),
       ],

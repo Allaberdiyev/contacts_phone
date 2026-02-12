@@ -1,4 +1,4 @@
-import 'package:contacts_phone/core/utils/colors/app_colors.dart';
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -22,7 +22,13 @@ class CustomField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final fill = isDark ? p.surface2 : p.surface;
+    final border = p.keypadBorder;
+    final focus = p.primary;
+    final error = p.danger;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -31,36 +37,32 @@ class CustomField extends StatelessWidget {
         enabled: enabled,
         controller: controller,
         keyboardType: keyboardType,
-        inputFormatters: inputFormatters ?? [],
+        inputFormatters: inputFormatters ?? const [],
         validator: validator,
         textCapitalization: TextCapitalization.words,
-        cursorColor: isDark ? AppColors.white : AppColors.greydark,
+        cursorColor: focus,
+        style: TextStyle(color: p.text, fontWeight: FontWeight.w700),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isDark ? AppColors.greylight : AppColors.greydark,
-          ),
+          hintStyle: TextStyle(fontWeight: FontWeight.bold, color: p.text3),
           filled: true,
-          fillColor: isDark ? AppColors.greydark : AppColors.white,
+          fillColor: fill,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: isDark ? AppColors.greydark : AppColors.greydark,
-            ),
+            borderSide: BorderSide(color: border, width: 1),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: isDark ? AppColors.white : AppColors.grey,
-            ),
+            borderSide: BorderSide(color: focus, width: 1.4),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: error, width: 1),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: error, width: 1.4),
           ),
         ),
       ),

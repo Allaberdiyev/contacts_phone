@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 
 class Segmented extends StatelessWidget {
@@ -9,8 +10,15 @@ class Segmented extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     const w = 230.0;
     const h = 38.0;
+
+    final bg = isDark ? p.surface2 : p.surface;
+    final selectedBg = isDark ? p.surface : p.surface2;
+    final border = p.keypadBorder;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
@@ -21,14 +29,13 @@ class Segmented extends StatelessWidget {
           height: h,
           padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.10),
+            color: bg,
             borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: border, width: 1),
           ),
           child: Stack(
             children: [
-              AnimatedAlign(
-                duration: const Duration(milliseconds: 180),
-                curve: Curves.easeOutCubic,
+              Container(
                 alignment: value == 0
                     ? Alignment.centerLeft
                     : Alignment.centerRight,
@@ -36,16 +43,23 @@ class Segmented extends StatelessWidget {
                   width: (w - 6) / 2,
                   height: h - 6,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.18),
+                    color: selectedBg,
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
               ),
-
               Row(
                 children: [
-                  _SegmentText(title: "Details", onTap: () => onChanged(0)),
-                  _SegmentText(title: "Voicemails", onTap: () => onChanged(1)),
+                  _SegmentText(
+                    title: "Details",
+                    selected: value == 0,
+                    onTap: () => onChanged(0),
+                  ),
+                  _SegmentText(
+                    title: "Voicemails",
+                    selected: value == 1,
+                    onTap: () => onChanged(1),
+                  ),
                 ],
               ),
             ],
@@ -58,20 +72,30 @@ class Segmented extends StatelessWidget {
 
 class _SegmentText extends StatelessWidget {
   final String title;
+  final bool selected;
   final VoidCallback onTap;
 
-  const _SegmentText({required this.title, required this.onTap});
+  const _SegmentText({
+    required this.title,
+    required this.selected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
+    final textColor = selected ? p.text : p.text2;
+
     return Expanded(
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
         child: Center(
           child: Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: textColor,
               fontWeight: FontWeight.w600,
               fontSize: 14,
             ),

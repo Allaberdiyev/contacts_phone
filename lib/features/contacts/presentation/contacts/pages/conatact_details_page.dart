@@ -1,4 +1,4 @@
-import 'package:contacts_phone/core/utils/colors/app_colors.dart';
+import 'package:contacts_phone/app/theme.dart';
 import 'package:contacts_phone/features/contacts/data/models/contacts_model.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/add_contact_sheet.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/avatar.dart';
@@ -38,18 +38,48 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
   }
 
   void openEditSheet() {
+    final p = AppColors.of(context);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: p.transparent,
       builder: (_) => AddContactSheet(contact: widget.contact),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
+    final dividerColor = p.searchBubbleDivider;
+    final chevronColor = p.text3;
+    final mutedStyle = TextStyle(
+      color: p.text2,
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+    );
+
+    final cardTitleStyle = TextStyle(
+      color: p.text,
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+    );
+
+    final labelStyle = TextStyle(
+      color: p.text2,
+      fontSize: 15,
+      fontWeight: FontWeight.w600,
+    );
+
+    final valueStyle = TextStyle(
+      color: p.text,
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+    );
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: p.transparent,
       body: Stack(
         children: [
           const Positioned.fill(child: Background()),
@@ -66,7 +96,6 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                   onSegmentChanged: (v) => setState(() => segmentIndex = v),
                   onBack: () => Navigator.pop(context),
                   onEdit: openEditSheet,
-
                   onSms: () => openUri('sms:${widget.contact.phoneNumber}'),
                   onCall: () => openUri('tel:${widget.contact.phoneNumber}'),
                   onVideo: () => openUri('tel:${widget.contact.phoneNumber}'),
@@ -75,7 +104,6 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                   ).showSnackBar(const SnackBar(content: Text("Email yo‘q"))),
                 ),
               ),
-
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(14, 12, 14, 28),
                 sliver: SliverList(
@@ -85,123 +113,92 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                         children: [
                           Row(
                             children: [
-                              Text(
-                                "Canceled Call",
-                                style: ContactDetailsTheme.muted,
-                              ),
-                              Spacer(),
-                              Text(
-                                "Yesterday · 10:38",
-                                style: ContactDetailsTheme.muted,
-                              ),
+                              Text("Canceled Call", style: mutedStyle),
+                              const Spacer(),
+                              Text("Yesterday · 10:38", style: mutedStyle),
                             ],
                           ),
                           const SizedBox(height: 14),
-                          const Divider(height: 1, color: Colors.white12),
+                          Divider(height: 1, color: dividerColor),
                           const SizedBox(height: 10),
                           ContainerRow(title: "Call History", onTap: () {}),
                         ],
                       ),
                     ),
                     const SizedBox(height: 14),
-
                     BlurCard(
                       child: Row(
                         children: [
-                          Avatar(size: 44, initials: initials, imageUrl: ""),
+                          Avatar(
+                            size: 44,
+                            initials: initials,
+                            imageUrl: widget.contact.imageUrl,
+                          ),
                           const SizedBox(width: 12),
-                          const Expanded(
+                          Expanded(
                             child: Text(
                               "Contact Photo & Poster",
-                              style: ContactDetailsTheme.cardTitle,
+                              style: cardTitleStyle,
                             ),
                           ),
-                          const Icon(
+                          Icon(
                             Icons.chevron_right_rounded,
-                            color: Colors.white38,
+                            color: chevronColor,
                             size: 26,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 14),
-
                     BlurCard(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "mobile",
-                            style: ContactDetailsTheme.label,
-                          ),
+                          Text("mobile", style: labelStyle),
                           const SizedBox(height: 6),
+                          Text(widget.contact.phoneNumber, style: valueStyle),
+                          const SizedBox(height: 12),
+                          Divider(height: 1, color: dividerColor),
+                          const SizedBox(height: 12),
+                          Text("Notes", style: cardTitleStyle),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    BlurCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Send Message", style: cardTitleStyle),
+                          const SizedBox(height: 12),
+                          Divider(height: 1, color: dividerColor),
+                          const SizedBox(height: 12),
+                          Text("Share Contact", style: cardTitleStyle),
+                          const SizedBox(height: 12),
+                          Divider(height: 1, color: dividerColor),
+                          const SizedBox(height: 12),
+                          Text("Add to Favorites", style: cardTitleStyle),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    BlurCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Text(
-                            widget.contact.phoneNumber,
-                            style: ContactDetailsTheme.cardValue,
-                          ),
-                          const SizedBox(height: 12),
-                          const Divider(height: 1, color: Colors.white12),
-                          const SizedBox(height: 12),
-                          const Text(
-                            "Notes",
-                            style: ContactDetailsTheme.cardTitle,
+                            "Add to Emergency Contacts",
+                            style: cardTitleStyle,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 10),
-
                     BlurCard(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Send Message",
-                            style: ContactDetailsTheme.cardTitle,
-                          ),
-                          const SizedBox(height: 12),
-
-                          const Divider(height: 1, color: Colors.white12),
-                          const SizedBox(height: 12),
-
-                          const Text(
-                            "Share Contact",
-                            style: ContactDetailsTheme.cardTitle,
-                          ),
-                          const SizedBox(height: 12),
-
-                          const Divider(height: 1, color: Colors.white12),
-                          const SizedBox(height: 12),
-
-                          const Text(
-                            "Add to Favorites",
-                            style: ContactDetailsTheme.cardTitle,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10),
-
-                    BlurCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Add to Emergency Contacts",
-                            style: ContactDetailsTheme.cardTitle,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    BlurCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Block Contact",
-                            style: ContactDetailsTheme.cardTitle,
-                          ),
+                          Text("Block Contact", style: cardTitleStyle),
                         ],
                       ),
                     ),

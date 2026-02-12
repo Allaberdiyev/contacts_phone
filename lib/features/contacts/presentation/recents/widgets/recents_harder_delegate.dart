@@ -1,15 +1,15 @@
 import 'dart:ui';
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 
 class RecentsHeaderDelegate extends SliverPersistentHeaderDelegate {
-  final int tab; // 0=All, 1=Missed
+  final int tab;
   final ValueChanged<int> onTabChanged;
 
   final TextEditingController searchController;
   final ValueChanged<String> onSearchChanged;
-
-  final VoidCallback onEditTap;   // iOS: Edit/Done
-  final VoidCallback onRightTap;  // iOS: filter/add (senda xohlagan callback)
+  final VoidCallback onEditTap;
+  final VoidCallback onRightTap;
 
   RecentsHeaderDelegate({
     required this.tab,
@@ -30,14 +30,19 @@ class RecentsHeaderDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(covariant RecentsHeaderDelegate oldDelegate) => true;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    final t = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    final p = AppColors.of(context);
 
+    final t = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
     final titleOpacity = (1.0 - t * 1.5).clamp(0.0, 1.0);
     final searchOpacity = (1.0 - t * 2.0).clamp(0.0, 1.0);
 
     return Container(
-      color: Colors.black,
+      color: p.recentsHeaderBg,
       child: SafeArea(
         bottom: false,
         child: Padding(
@@ -45,44 +50,34 @@ class RecentsHeaderDelegate extends SliverPersistentHeaderDelegate {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // top row: Edit | segmented | right button
               Row(
                 children: [
                   _PillButton(text: "Edit", onTap: onEditTap),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: _Segmented(
-                      value: tab,
-                      onChanged: onTabChanged,
-                    ),
+                    child: _Segmented(value: tab, onChanged: onTabChanged),
                   ),
                   const SizedBox(width: 12),
                   _CircleIconButton(
-                    icon: Icons.tune_rounded, // videodagi filterga o‘xshaydi
+                    icon: Icons.tune_rounded,
                     onTap: onRightTap,
                   ),
                 ],
               ),
-
               const SizedBox(height: 16),
-
-              // big title
               Opacity(
                 opacity: titleOpacity,
-                child: const Text(
+                child: Text(
                   "Recents",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: p.recentsTitleColor,
                     fontSize: 56,
                     fontWeight: FontWeight.w800,
                     height: 1.0,
                   ),
                 ),
               ),
-
               const SizedBox(height: 12),
-
-              // search bar
               Opacity(
                 opacity: searchOpacity,
                 child: _SearchBar(
@@ -101,26 +96,37 @@ class RecentsHeaderDelegate extends SliverPersistentHeaderDelegate {
 class _PillButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
+
   const _PillButton({required this.text, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(999),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-        child: InkWell(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.10),
-              border: Border.all(color: Colors.white.withOpacity(0.16)),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: const Text(
-              "Edit",
-              style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(999),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+              decoration: BoxDecoration(
+                color: p.recentsGlassBg,
+                border: Border.all(color: p.recentsGlassBorder),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: p.recentsGlassText,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
           ),
         ),
@@ -132,15 +138,18 @@ class _PillButton extends StatelessWidget {
 class _CircleIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
+
   const _CircleIconButton({required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
     return ClipOval(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
         child: Material(
-          color: Colors.white.withOpacity(0.10),
+          color: p.recentsGlassBg,
           child: InkWell(
             onTap: onTap,
             child: Container(
@@ -148,9 +157,9 @@ class _CircleIconButton extends StatelessWidget {
               height: 56,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white.withOpacity(0.16)),
+                border: Border.all(color: p.recentsGlassBorder),
               ),
-              child: Icon(icon, color: Colors.white, size: 28),
+              child: Icon(icon, color: p.recentsGlassIcon, size: 28),
             ),
           ),
         ),
@@ -162,68 +171,43 @@ class _CircleIconButton extends StatelessWidget {
 class _Segmented extends StatelessWidget {
   final int value;
   final ValueChanged<int> onChanged;
+
   const _Segmented({required this.value, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
     return Container(
       height: 56,
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.10),
+        color: p.recentsSegBg,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Colors.white.withOpacity(0.14)),
+        border: Border.all(color: p.recentsSegBorder),
       ),
       child: LayoutBuilder(
         builder: (_, c) {
           final w = c.maxWidth;
           return Stack(
             children: [
-              AnimatedAlign(
-                alignment: value == 0 ? Alignment.centerLeft : Alignment.centerRight,
-                duration: const Duration(milliseconds: 180),
-                curve: Curves.easeOut,
+              Align(
+                alignment: value == 0
+                    ? Alignment.centerLeft
+                    : Alignment.centerRight,
                 child: Container(
                   width: (w - 12) / 2,
                   height: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.12),
+                    color: p.recentsSegThumb,
                     borderRadius: BorderRadius.circular(22),
                   ),
                 ),
               ),
               Row(
                 children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => onChanged(0),
-                      child: Center(
-                        child: Text(
-                          "All",
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(value == 0 ? 0.95 : 0.75),
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => onChanged(1),
-                      child: Center(
-                        child: Text(
-                          "Missed",
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(value == 1 ? 0.95 : 0.75),
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  _segBtn(context, "All", value == 0, () => onChanged(0)),
+                  _segBtn(context, "Missed", value == 1, () => onChanged(1)),
                 ],
               ),
             ],
@@ -232,41 +216,79 @@ class _Segmented extends StatelessWidget {
       ),
     );
   }
+
+  Widget _segBtn(
+    BuildContext context,
+    String text,
+    bool selected,
+    VoidCallback onTap,
+  ) {
+    final p = AppColors.of(context);
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: selected
+                  ? p.recentsSegTextActive
+                  : p.recentsSegTextInactive,
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _SearchBar extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
+
   const _SearchBar({required this.controller, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
     return Container(
       height: 58,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C1C1E),
+        color: p.recentsSearchBg,
         borderRadius: BorderRadius.circular(30),
       ),
       child: Row(
         children: [
-          Icon(Icons.search_rounded, color: Colors.white.withOpacity(0.75), size: 28),
+          Icon(Icons.search_rounded, color: p.recentsSearchIcon, size: 28),
           const SizedBox(width: 10),
           Expanded(
             child: TextField(
               controller: controller,
               onChanged: onChanged,
-              style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w600),
-              cursorColor: Colors.white,
+              style: TextStyle(
+                color: p.recentsSearchText,
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+              ),
+              cursorColor: p.recentsSearchText,
               decoration: InputDecoration(
                 hintText: "Search",
-                hintStyle: TextStyle(color: Colors.white.withOpacity(0.45), fontSize: 22, fontWeight: FontWeight.w600),
+                hintStyle: TextStyle(
+                  color: p.recentsSearchHint,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                ),
                 border: InputBorder.none,
                 isDense: true,
               ),
             ),
           ),
-          Icon(Icons.mic_none_rounded, color: Colors.white.withOpacity(0.75), size: 28),
+          Icon(Icons.mic_none_rounded, color: p.recentsSearchIcon, size: 28),
         ],
       ),
     );

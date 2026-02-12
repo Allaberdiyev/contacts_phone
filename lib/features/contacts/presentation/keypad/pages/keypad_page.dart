@@ -1,3 +1,4 @@
+import 'package:contacts_phone/app/theme.dart';
 import 'package:contacts_phone/features/contacts/presentation/keypad/widgets/create_open.dart';
 import 'package:contacts_phone/features/contacts/presentation/keypad/widgets/dial_displey.dart';
 import 'package:contacts_phone/features/contacts/presentation/keypad/widgets/dial_pad.dart';
@@ -79,7 +80,11 @@ class _KeypadPageState extends State<KeypadPage> {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
     final size = MediaQuery.sizeOf(context);
+
+    final background = p.bg;
+    final iconColor = p.text;
 
     final side = (size.width * 0.2);
     final spaceWith = (size.width * 0.1);
@@ -112,43 +117,45 @@ class _KeypadPageState extends State<KeypadPage> {
         final showAdd = qDigits.isNotEmpty && !isSavedExact;
 
         return Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: background,
           body: SafeArea(
             child: Stack(
               children: [
                 Column(
                   children: [
                     DialDisplay(height: topH, side: side, text: display),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 180),
-                      child: matches.isEmpty
-                          ? const SizedBox(height: 70)
-                          : Padding(
-                              padding: EdgeInsets.symmetric(horizontal: side),
-                              child: SearchBubble(
-                                contact: matches.first,
-                                total: matches.length,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => ContactDetailsPage(
-                                        contact: matches.first,
-                                      ),
+
+                    matches.isEmpty
+                        ? const SizedBox(height: 70)
+                        : Padding(
+                            padding: EdgeInsets.symmetric(horizontal: side),
+                            child: SearchBubble(
+                              contact: matches.first,
+                              total: matches.length,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ContactDetailsPage(
+                                      contact: matches.first,
                                     ),
-                                  );
-                                },
-                              ),
+                                  ),
+                                );
+                              },
                             ),
-                    ),
+                          ),
+
                     const Spacer(),
+
                     DialPad(
                       diameter: diameter,
                       spaceWith: spaceWith,
                       spaceHeight: spaceHeight,
                       onKey: _append,
                     ),
+
                     SizedBox(height: spaceHeight * 1),
+
                     CallRow(
                       diameter: diameter,
                       callDiameter: callDiameter,
@@ -163,20 +170,17 @@ class _KeypadPageState extends State<KeypadPage> {
                 Positioned(
                   top: 6,
                   right: side - 70,
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 160),
-                    child: showAdd
-                        ? IconButton(
-                            key: const ValueKey('add'),
-                            icon: const Icon(
-                              CupertinoIcons.person_crop_circle_badge_plus,
-                              color: Colors.white,
-                              size: 32,
-                            ),
-                            onPressed: () => openCreateNew(context, qDigits),
-                          )
-                        : const SizedBox(width: 44, height: 44),
-                  ),
+                  child: showAdd
+                      ? IconButton(
+                          key: const ValueKey('add'),
+                          icon: Icon(
+                            CupertinoIcons.person_crop_circle_badge_plus,
+                            color: iconColor,
+                            size: 32,
+                          ),
+                          onPressed: () => openCreateNew(context, qDigits),
+                        )
+                      : const SizedBox(width: 44, height: 44),
                 ),
               ],
             ),

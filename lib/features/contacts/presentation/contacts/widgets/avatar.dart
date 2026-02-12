@@ -1,3 +1,5 @@
+import 'package:contacts_phone/app/theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Avatar extends StatelessWidget {
@@ -14,41 +16,62 @@ class Avatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = imageUrl.trim().isNotEmpty;
+    if (imageUrl.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(
+          imageUrl,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _fallback(context),
+        ),
+      );
+    }
+    return _fallback(context);
+  }
 
-    return Container(
+  Widget _fallback(BuildContext context) {
+    final p = AppColors.of(context);
+
+    final color1 = ContactDetailsTheme.backgroundColors[1];
+    final color2 = ContactDetailsTheme.backgroundColors[3];
+
+    return SizedBox(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.22),
-            blurRadius: 26,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white.withOpacity(0.10),
-          border: Border.all(color: Colors.white.withOpacity(0.16), width: 2),
-        ),
-        child: ClipOval(
-          child: hasImage
-              ? Image.network(imageUrl, fit: BoxFit.cover)
-              : Center(
-                  child: Text(
-                    initials,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: size * 0.42,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
+      child: ClipOval(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [color1, color2],
                 ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: const Alignment(-0.55, -0.6),
+                  radius: 1.1,
+                  colors: [p.avatarHighlight, p.transparent],
+                ),
+              ),
+            ),
+            Center(
+              child: Text(
+                initials.isEmpty ? ' ' : initials,
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: size * 0.36,
+                  color: p.text,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

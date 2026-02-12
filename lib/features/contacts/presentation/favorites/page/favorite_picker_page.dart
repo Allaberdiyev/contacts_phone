@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:contacts_phone/core/utils/colors/app_colors.dart';
+import 'package:contacts_phone/app/theme.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/avatar.dart';
 import 'package:contacts_phone/features/contacts/presentation/favorites/widget/save_shared_pref_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import '../../../data/models/contacts_model.dart';
 
 class FavoritePickerPage extends StatefulWidget {
@@ -33,16 +35,24 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
   String _initials(ContactsModel c) {
     final f = c.firstName.trim();
     final l = c.lastName.trim();
-    final s = '${f.isNotEmpty ? f[0] : ''}${l.isNotEmpty ? l[0] : ''}'
+    return '${f.isNotEmpty ? f[0] : ''}${l.isNotEmpty ? l[0] : ''}'
         .toUpperCase();
-    return s.isEmpty ? ' ' : s;
   }
 
   @override
   Widget build(BuildContext context) {
-    final bg = AppColors.dark;
-    const pillBg = Color(0xFF1C1C1E);
-    const pillBorder = Colors.white24;
+    final p = AppColors.of(context);
+
+    final bg = p.bg;
+    final pillBg = Theme.of(context).brightness == Brightness.dark
+        ? p.surface2
+        : p.surface;
+    final pillBorder = p.keypadBorder;
+
+    final titleColor = p.text;
+    final subColor = p.text2;
+    final hintColor = p.text3;
+    final iconColor = p.text2;
 
     return Scaffold(
       backgroundColor: bg,
@@ -50,9 +60,9 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
         child: Column(
           children: [
             const SizedBox(height: 6),
-            const Text(
+            Text(
               'Choose a contact to add to Favorites',
-              style: TextStyle(color: Colors.white54, fontSize: 11),
+              style: TextStyle(color: subColor, fontSize: 11),
             ),
             const SizedBox(height: 8),
 
@@ -66,16 +76,14 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: _CircleBtn(
-                        bg: pillBg,
-                        border: pillBorder,
                         icon: CupertinoIcons.back,
                         onTap: () => Navigator.pop(context, false),
                       ),
                     ),
-                    const Text(
+                    Text(
                       'Contacts',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: titleColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
@@ -83,8 +91,6 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: _CircleBtn(
-                        bg: pillBg,
-                        border: pillBorder,
                         icon: CupertinoIcons.xmark,
                         onTap: () => Navigator.pop(context, false),
                       ),
@@ -94,6 +100,7 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
               ),
             ),
 
+            // Search
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
               child: Container(
@@ -106,22 +113,21 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
                 child: Row(
                   children: [
                     const SizedBox(width: 12),
-                    const Icon(Icons.search, color: Colors.white54, size: 20),
+                    Icon(Icons.search, color: iconColor, size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: TextField(
                         controller: _searchCtrl,
                         onChanged: (v) => setState(() => _q = v),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                        ),
-                        decoration: const InputDecoration(
+                        style: TextStyle(color: titleColor, fontSize: 15),
+                        decoration: InputDecoration(
                           hintText: 'Search',
-                          hintStyle: TextStyle(color: Colors.white38),
+                          hintStyle: TextStyle(color: hintColor),
                           border: InputBorder.none,
                           isDense: true,
-                          contentPadding: EdgeInsets.symmetric(vertical: 10),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                          ),
                         ),
                       ),
                     ),
@@ -131,25 +137,18 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
                           _searchCtrl.clear();
                           setState(() => _q = '');
                         },
-                        icon: const Icon(
-                          Icons.close,
-                          color: Colors.white54,
-                          size: 18,
-                        ),
+                        icon: Icon(Icons.close, color: iconColor, size: 18),
                       ),
                     IconButton(
                       onPressed: () {},
-                      icon: const Icon(
-                        Icons.mic,
-                        color: Colors.white70,
-                        size: 20,
-                      ),
+                      icon: Icon(Icons.mic, color: iconColor, size: 20),
                     ),
                   ],
                 ),
               ),
             ),
 
+            // List
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -174,10 +173,10 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
 
                   return ListView.separated(
                     itemCount: list.length,
-                    separatorBuilder: (_, __) => const Divider(
+                    separatorBuilder: (_, __) => Divider(
                       height: 1,
                       thickness: 0.6,
-                      color: Colors.white12,
+                      color: pillBorder,
                       indent: 76,
                     ),
                     itemBuilder: (context, i) {
@@ -198,28 +197,10 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
                           ),
                           child: Row(
                             children: [
-                              Container(
-                                width: 40,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      Color(0xFF75718C),
-                                      Color(0xFF221E38),
-                                    ],
-                                  ),
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  _initials(c),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
+                              Avatar(
+                                size: 44,
+                                initials: _initials(c),
+                                imageUrl: c.imageUrl,
                               ),
                               const SizedBox(width: 14),
                               Expanded(
@@ -227,8 +208,8 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
                                   title,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: titleColor,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -251,20 +232,20 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
 }
 
 class _CircleBtn extends StatelessWidget {
-  final Color bg;
-  final Color border;
   final IconData icon;
   final VoidCallback onTap;
 
-  const _CircleBtn({
-    required this.bg,
-    required this.border,
-    required this.icon,
-    required this.onTap,
-  });
+  const _CircleBtn({required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final bg = isDark ? p.surface2 : p.surface;
+    final border = p.keypadBorder;
+    final iconColor = p.text2;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
@@ -276,7 +257,7 @@ class _CircleBtn extends StatelessWidget {
           shape: BoxShape.circle,
           border: Border.all(color: border, width: 1),
         ),
-        child: Icon(icon, color: Colors.white70, size: 18),
+        child: Icon(icon, color: iconColor, size: 18),
       ),
     );
   }

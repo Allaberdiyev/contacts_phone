@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:contacts_phone/core/utils/colors/app_colors.dart';
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 
 class BlurCard extends StatelessWidget {
@@ -8,6 +8,9 @@ class BlurCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(22),
       child: BackdropFilter(
@@ -15,9 +18,9 @@ class BlurCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: ContactDetailsTheme.cardTint.withOpacity(0.58),
+            color: Color(0x943E3653),
             borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: Colors.white.withOpacity(0.10)),
+            border: Border.all(color: p.keypadBorder, width: 1),
           ),
           child: child,
         ),

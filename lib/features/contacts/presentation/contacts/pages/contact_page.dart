@@ -1,6 +1,6 @@
 import 'package:azlistview/azlistview.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:contacts_phone/core/utils/colors/app_colors.dart';
+import 'package:contacts_phone/app/theme.dart';
 import 'package:contacts_phone/core/widgets/icon_widget.dart';
 import 'package:contacts_phone/core/widgets/search_bar_widget.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_bloc.dart';
@@ -47,22 +47,23 @@ class _ContactsPageState extends State<ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.dark : Colors.white,
+      backgroundColor: p.bg,
       appBar: AppBar(
-        backgroundColor: isDark ? AppColors.dark : Colors.white,
+        backgroundColor: p.bg,
         elevation: 0,
+        centerTitle: true,
         title: Text(
           'contacts'.tr(),
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: isDark ? AppColors.white : AppColors.dark,
+            color: p.text,
             letterSpacing: 2,
           ),
         ),
-        centerTitle: true,
         leadingWidth: 110,
         leading: Row(
           children: [
@@ -84,7 +85,7 @@ class _ContactsPageState extends State<ContactsPage> {
                   isScrollControlled: true,
                   builder: (_) => BlocProvider.value(
                     value: context.read<ContactBloc>(),
-                    child: AddContactSheet(),
+                    child: const AddContactSheet(),
                   ),
                 );
               },
@@ -109,7 +110,7 @@ class _ContactsPageState extends State<ContactsPage> {
                 isScrollControlled: true,
                 builder: (_) => BlocProvider.value(
                   value: context.read<ContactBloc>(),
-                  child: AddContactSheet(),
+                  child: const AddContactSheet(),
                 ),
               );
             },
@@ -124,12 +125,14 @@ class _ContactsPageState extends State<ContactsPage> {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color: p.primary));
           }
 
           final docs = snapshot.data!.docs;
           if (docs.isEmpty) {
-            return Center(child: Text('no_contacts'.tr()));
+            return Center(
+              child: Text('no_contacts'.tr(), style: TextStyle(color: p.text2)),
+            );
           }
 
           _contacts = docs
@@ -153,6 +156,8 @@ class _ContactsPageState extends State<ContactsPage> {
           SuspensionUtil.sortListBySuspensionTag(filtered);
           SuspensionUtil.setShowSuspensionStatus(filtered);
 
+          final dividerColor = p.keypadBorder;
+
           return SafeArea(
             child: ScrollConfiguration(
               behavior: NoGlowScrollBehavior(),
@@ -172,7 +177,6 @@ class _ContactsPageState extends State<ContactsPage> {
                       onMic: () {},
                     ),
                   ),
-
                   Expanded(
                     child: AzListView(
                       data: filtered,
@@ -188,10 +192,6 @@ class _ContactsPageState extends State<ContactsPage> {
                             : null;
                         final needLongDivider =
                             !isLast && nextTag != currentTag;
-
-                        final dividerColor = isDark
-                            ? Colors.white12
-                            : Colors.black12;
 
                         return Column(
                           children: [
@@ -222,11 +222,11 @@ class _ContactsPageState extends State<ContactsPage> {
                       },
                       indexBarOptions: IndexBarOptions(
                         textStyle: TextStyle(
-                          color: AppColors.blue,
+                          color: p.primary,
                           fontWeight: FontWeight.bold,
                         ),
                         selectTextStyle: TextStyle(
-                          color: AppColors.blue,
+                          color: p.primary,
                           fontWeight: FontWeight.bold,
                         ),
                         selectItemDecoration: const BoxDecoration(
@@ -235,20 +235,12 @@ class _ContactsPageState extends State<ContactsPage> {
                         needRebuild: true,
                         indexHintWidth: 0,
                         indexHintHeight: 0,
-                        indexHintDecoration: const BoxDecoration(
-                          color: Colors.transparent,
-                        ),
-                        indexHintTextStyle: const TextStyle(
-                          color: Colors.transparent,
-                          fontSize: 0,
-                        ),
+                        indexHintDecoration: const BoxDecoration(),
+                        indexHintTextStyle: const TextStyle(fontSize: 0),
                       ),
-                      indexHintBuilder: (_, _) => const SizedBox.shrink(),
+                      indexHintBuilder: (_, __) => const SizedBox.shrink(),
                       susItemBuilder: (context, index) {
                         final tag = filtered[index].getSuspensionTag();
-                        final dividerColor = isDark
-                            ? Colors.white12
-                            : Colors.black12;
 
                         return Column(
                           children: [
@@ -258,14 +250,14 @@ class _ContactsPageState extends State<ContactsPage> {
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                               ),
-                              color: isDark ? AppColors.dark : Colors.white,
+                              color: p.bg,
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 tag,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.greylight,
+                                  color: p.text3,
                                 ),
                               ),
                             ),
@@ -332,7 +324,7 @@ class StopPhysics extends ScrollPhysics {
     }
     if (position.pixels < position.maxScrollExtent &&
         position.maxScrollExtent < value) {
-      return value - position.maxScrollExtent;
+      return value - position.pixels;
     }
     return 0.0;
   }

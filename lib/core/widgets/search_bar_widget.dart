@@ -1,3 +1,4 @@
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 
 class SearchBarWidget extends StatelessWidget {
@@ -6,7 +7,8 @@ class SearchBarWidget extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final VoidCallback onClear;
   final VoidCallback? onMic;
-  final bool isDark;
+  final bool
+  isDark; 
   final String hintText;
 
   const SearchBarWidget({
@@ -22,9 +24,15 @@ class SearchBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textMain = isDark ? Colors.white : Colors.black87;
-    final pillBorder = isDark ? Colors.white24 : Colors.black26;
-    final bg = isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7);
+    final p = AppColors.of(context);
+
+    final textMain = p.recentsSearchText;
+    final pillBorder = p.recentsGlassBorder;
+    final bg = p.recentsSearchBg;
+
+    final iconMain = p.recentsSearchIcon;
+    final iconMic = p.recentsSearchIcon;
+    final hint = p.recentsSearchHint;
 
     return Container(
       height: 44,
@@ -36,13 +44,8 @@ class SearchBarWidget extends StatelessWidget {
       child: Row(
         children: [
           const SizedBox(width: 12),
-          Icon(
-            Icons.search,
-            color: isDark ? Colors.white54 : Colors.black45,
-            size: 22,
-          ),
+          Icon(Icons.search, color: iconMain, size: 22),
           const SizedBox(width: 8),
-
           Expanded(
             child: TextField(
               controller: controller,
@@ -50,32 +53,20 @@ class SearchBarWidget extends StatelessWidget {
               style: TextStyle(color: textMain, fontSize: 16),
               decoration: InputDecoration(
                 hintText: hintText,
-
-                hintStyle: TextStyle(
-                  color: isDark ? Colors.white38 : Colors.black38,
-                ),
+                hintStyle: TextStyle(color: hint),
                 border: InputBorder.none,
                 isDense: true,
               ),
             ),
           ),
-
           if (query.isNotEmpty)
             IconButton(
               onPressed: onClear,
-              icon: Icon(
-                Icons.close,
-                size: 20,
-                color: isDark ? Colors.white54 : Colors.black45,
-              ),
+              icon: Icon(Icons.close, size: 20, color: iconMain),
             ),
-
           IconButton(
             onPressed: onMic,
-            icon: Icon(
-              Icons.mic,
-              color: isDark ? Colors.white70 : Colors.black54,
-            ),
+            icon: Icon(Icons.mic, color: iconMic),
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:contacts_phone/app/theme.dart';
 
 class DialKey extends StatefulWidget {
   final double diameter;
@@ -29,8 +30,11 @@ class _DialKeyState extends State<DialKey> {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
     final showSub = widget.sub.isNotEmpty;
-    final bg = down ? Colors.white.withOpacity(0.14) : Colors.white.withOpacity(0.08);
+
+    final bg = down ? p.keypadHi : p.keypadFill;
+    final border = p.keypadBorder;
 
     return GestureDetector(
       onTapDown: (_) => setState(() => down = true),
@@ -38,14 +42,13 @@ class _DialKeyState extends State<DialKey> {
       onTapUp: (_) => setState(() => down = false),
       onTap: widget.onTap,
       onLongPress: widget.onLongPress,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 110),
+      child: Container(
         width: widget.diameter,
         height: widget.diameter,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: bg,
-          border: Border.all(color: Colors.white.withOpacity(0.07)),
+          border: Border.all(color: border),
         ),
         child: Center(
           child: Column(
@@ -54,7 +57,7 @@ class _DialKeyState extends State<DialKey> {
               Text(
                 widget.title,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: p.text,
                   fontSize: widget.titleSize,
                   fontWeight: FontWeight.w700,
                 ),
@@ -65,7 +68,7 @@ class _DialKeyState extends State<DialKey> {
                   child: Text(
                     widget.sub,
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.75),
+                      color: p.text2,
                       fontSize: widget.subSize,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.4,

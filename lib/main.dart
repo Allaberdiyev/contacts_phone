@@ -1,9 +1,9 @@
 import 'package:contacts_phone/app/app.dart';
 import 'package:contacts_phone/app/di/dependecy_injection.dart';
 import 'package:contacts_phone/app/router.dart';
+import 'package:contacts_phone/app/theme.dart';
 import 'package:contacts_phone/core/services/app_share_prefs.dart';
 import 'package:contacts_phone/core/services/notificaxtion_service.dart';
-import 'package:contacts_phone/core/utils/colors/app_colors.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_bloc.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,9 @@ Future<void> main() async {
 
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   setUp();
 
   final savedThemeMode = await AppSharePrefs.loadThemeMode();
@@ -70,25 +72,6 @@ class _MainAppState extends State<MainApp> {
     NotificationService.instance.init();
   }
 
-  ThemeData _lightTheme() {
-    return ThemeData(
-      scaffoldBackgroundColor: AppColors.whitegrey,
-      colorScheme: ColorScheme.light(
-        surface: AppColors.whitegrey,
-        primary: AppColors.whitegrey,
-      ),
-    );
-  }
-
-  ThemeData _darkTheme() {
-    return ThemeData(
-      colorScheme: ColorScheme.dark(
-        surface: Colors.black,
-        primary: AppColors.greydark,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
@@ -96,10 +79,10 @@ class _MainAppState extends State<MainApp> {
       builder: (_, mode, _) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: _lightTheme(),
-          darkTheme: _darkTheme(),
-          themeMode: mode,
 
+          theme: AppTheme.light(),
+          darkTheme: AppTheme.dark(),
+          themeMode: mode,
           locale: context.locale,
           supportedLocales: context.supportedLocales,
           localizationsDelegates: context.localizationDelegates,
@@ -108,7 +91,6 @@ class _MainAppState extends State<MainApp> {
           routes: {
             Routers.contactsPage: (_) => BlocProvider(
               create: (_) => getIt<ContactBloc>(),
-              
               child: const App(),
             ),
           },

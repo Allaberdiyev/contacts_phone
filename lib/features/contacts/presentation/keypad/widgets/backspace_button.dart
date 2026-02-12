@@ -1,3 +1,4 @@
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 
 class BackspaceButton extends StatefulWidget {
@@ -21,8 +22,13 @@ class _BackspaceButtonState extends State<BackspaceButton> {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
     final w = (widget.size * 0.4);
     final h = widget.size.clamp(44.0, 58.0);
+
+    // ✅ palette’dan: darkda oq, lightda qora
+    final iconColor = down ? p.text2 : p.text;
 
     return GestureDetector(
       onTapDown: (_) => setState(() => down = true),
@@ -30,15 +36,13 @@ class _BackspaceButtonState extends State<BackspaceButton> {
       onTapUp: (_) => setState(() => down = false),
       onTap: widget.onTap,
       onLongPress: widget.onLongPress,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 120),
+      child: SizedBox(
         width: w,
         height: h,
-
         child: Icon(
           Icons.backspace_outlined,
           size: (h * 0.6),
-          color: Colors.white.withOpacity(0.95),
+          color: iconColor,
         ),
       ),
     );

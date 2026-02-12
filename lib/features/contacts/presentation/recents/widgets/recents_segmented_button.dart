@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 
 class RecentsSegmentedButton extends StatelessWidget {
@@ -15,14 +16,16 @@ class RecentsSegmentedButton extends StatelessWidget {
     super.key,
     required this.value,
     required this.onChanged,
-    this.width = 70,
-    this.height = 50,
+    this.width = 220,
+    this.height = 44,
     this.leftText = "",
     this.rightText = "",
   });
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
     final w = width;
     final h = height;
 
@@ -33,29 +36,25 @@ class RecentsSegmentedButton extends StatelessWidget {
         child: Container(
           width: w,
           height: h,
-          padding: const EdgeInsets.all(1),
+          padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.10),
-            borderRadius: BorderRadius.circular(50),
+            color: p.segmentBg,
+            borderRadius: BorderRadius.circular(999),
           ),
           child: Stack(
             children: [
-              AnimatedAlign(
-                duration: const Duration(milliseconds: 180),
-                curve: Curves.easeOutCubic,
-                alignment: value == 0
-                    ? Alignment.centerLeft
-                    : Alignment.centerRight,
+              Align(
+                alignment:
+                    value == 0 ? Alignment.centerLeft : Alignment.centerRight,
                 child: Container(
                   width: (w - 6) / 2,
                   height: h - 6,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.18),
-                    borderRadius: BorderRadius.circular(50),
+                    color: p.segmentThumb,
+                    borderRadius: BorderRadius.circular(999),
                   ),
                 ),
               ),
-
               Row(
                 children: [
                   _SegmentText(
@@ -91,10 +90,7 @@ class _SegmentText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final active = isDark ? Colors.white : Colors.black87;
-    final inactive = isDark ? Colors.white70 : Colors.black54;
+    final p = AppColors.of(context);
 
     return Expanded(
       child: InkWell(
@@ -104,7 +100,7 @@ class _SegmentText extends StatelessWidget {
           child: Text(
             title,
             style: TextStyle(
-              color: selected ? active : inactive,
+              color: selected ? p.segmentTextActive : p.segmentTextInactive,
               fontWeight: FontWeight.w600,
               fontSize: 14,
             ),

@@ -1,3 +1,4 @@
+import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
 
 class ContainerRow extends StatelessWidget {
@@ -18,13 +19,16 @@ class ContainerRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
     final titleStyle = TextStyle(
-      color: Colors.white.withOpacity(0.92),
+      color: p.text,
       fontSize: 20,
       fontWeight: FontWeight.w600,
     );
+
     final subStyle = TextStyle(
-      color: Colors.white.withOpacity(0.65),
+      color: p.text2,
       fontSize: 18,
       fontWeight: FontWeight.w500,
     );
@@ -53,7 +57,7 @@ class ContainerRow extends StatelessWidget {
               Icon(
                 Icons.chevron_right_rounded,
                 size: 28,
-                color: Colors.white.withOpacity(0.55),
+                color: p.text2,
               ),
           ],
         ),

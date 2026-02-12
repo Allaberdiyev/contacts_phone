@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:contacts_phone/core/utils/colors/app_colors.dart';
+import 'package:contacts_phone/app/theme.dart';
 import 'package:contacts_phone/features/contacts/data/models/contacts_model.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/avatar.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/circle_back_buttons.dart';
@@ -8,16 +8,12 @@ import 'package:flutter/material.dart';
 
 class ContactHeaderDelegate extends SliverPersistentHeaderDelegate {
   final ContactsModel contact;
-
   final String name;
   final String initials;
-
   final int segment;
   final ValueChanged<int> onSegmentChanged;
-
   final VoidCallback onBack;
   final VoidCallback onEdit;
-
   final VoidCallback onSms;
   final VoidCallback onCall;
   final VoidCallback onVideo;
@@ -49,22 +45,28 @@ class ContactHeaderDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
+    final pal = AppColors.of(context);
     final top = MediaQuery.of(context).padding.top;
 
     final total = maxExtent - minExtent;
-    final p = (total == 0 ? 0.0 : shrinkOffset / total).clamp(0.0, 1.0);
-    final t = Curves.easeOutCubic.transform(p);
+    final progress = (total == 0 ? 0.0 : shrinkOffset / total).clamp(0.0, 1.0);
+    final t = Curves.easeOutCubic.transform(progress);
 
-    final iconsFade = ((p - 0.06) / 0.22).clamp(0.0, 1.0);
+    final iconsFade = ((progress - 0.06) / 0.22).clamp(0.0, 1.0);
     final iconsOpacity = 1.0 - Curves.easeOut.transform(iconsFade);
 
     final blur = lerpDouble(0, 14, t)!;
-    final glassOpacity = lerpDouble(0.00, 0.05, t)!;
+
+    final glassOpacity = lerpDouble(0.0, 0.20, t)!;
 
     final avatarSize = lerpDouble(155, 44, t)!;
     final avatarY = lerpDouble(top + 78, top + 6, t)!;
 
-    final nameFont = lerpDouble(ContactDetailsTheme.title.fontSize!, 20, t)!;
+    final nameFont = lerpDouble(
+      ContactDetailsTheme.title.fontSize ?? 40,
+      20,
+      t,
+    )!;
     final nameY = lerpDouble(top + 255, top + 56, t)!;
 
     final iconsY = lerpDouble(top + 330, top + 96, t)!;
@@ -78,8 +80,9 @@ class ContactHeaderDelegate extends SliverPersistentHeaderDelegate {
         ClipRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-            child: Container(
-              color: ContactDetailsTheme.glassColor.withOpacity(glassOpacity),
+            child: Opacity(
+              opacity: glassOpacity,
+              child: Container(color: ContactDetailsTheme.glassColor),
             ),
           ),
         ),
@@ -115,8 +118,11 @@ class ContactHeaderDelegate extends SliverPersistentHeaderDelegate {
           child: Center(
             child: Text(
               name,
-              style: ContactDetailsTheme.title.copyWith(fontSize: nameFont),
               textAlign: TextAlign.center,
+              style: ContactDetailsTheme.title.copyWith(
+                fontSize: nameFont,
+                color: pal.text,
+              ),
             ),
           ),
         ),
@@ -169,21 +175,24 @@ class ContactHeaderDelegate extends SliverPersistentHeaderDelegate {
 class _ActionIcon extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
+
   const _ActionIcon({required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final p = AppColors.of(context);
+
+    final bg = ContactDetailsTheme.actionTint;
+    final iconColor = p.text;
+
     return InkWell(
       borderRadius: BorderRadius.circular(999),
       onTap: onTap,
       child: Container(
         width: 54,
         height: 54,
-        decoration: BoxDecoration(
-          color: ContactDetailsTheme.actionTint.withOpacity(0.35),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, color: Colors.white, size: 22),
+        decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+        child: Icon(icon, color: iconColor, size: 22),
       ),
     );
   }
