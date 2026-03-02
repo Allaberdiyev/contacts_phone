@@ -1,8 +1,8 @@
 import 'package:contacts_phone/app/theme.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:contacts_phone/core/widgets/icon_widget.dart';
 import 'backspace_button.dart';
 
 class CallRow extends StatelessWidget {
@@ -34,7 +34,7 @@ class CallRow extends StatelessWidget {
     if (!ok && context.mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Qo'ng'iroq ochilmadi")));
+      ).showSnackBar(SnackBar(content: Text('call_failed'.tr())));
     }
   }
 
@@ -42,11 +42,11 @@ class CallRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = AppColors.of(context);
 
-    final bsSize = (diameter * 0.60);
-    final iconSize = (callDiameter * 0.40);
+    final bsSize = diameter * 0.60;
+    final iconSize = callDiameter * 0.42;
 
     final callBg = p.callGreen;
-    final callIconColor = p.text;
+    final callIconColor = Colors.white;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -62,23 +62,15 @@ class CallRow extends StatelessWidget {
             child: InkWell(
               customBorder: const CircleBorder(),
               onTap: () => _call(context),
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
+              splashColor: Colors.white.withAlpha(200),
+              highlightColor: Colors.white.withAlpha(100),
               child: Center(
-                child: IgnorePointer(
-                  child: IconWidget(
-                    type: IconContentType.image,
-                    image: Image.asset(
-                      'assets/pictures/phone_icon.png',
-                      fit: BoxFit.cover,
-                      color: callIconColor,
-                    ),
-                    selected: false,
-                    isDark: Theme.of(context).brightness == Brightness.dark,
-                    onTap: () => _call(context),
-                    iconSize: iconSize,
-                    radius: 50,
-                  ),
+                child: Image.asset(
+                  'assets/pictures/phone_icon.png',
+                  width: iconSize,
+                  height: iconSize,
+                  fit: BoxFit.contain,
+                  color: callIconColor,
                 ),
               ),
             ),

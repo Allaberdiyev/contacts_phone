@@ -4,7 +4,7 @@ import 'package:contacts_phone/app/theme.dart';
 import 'package:contacts_phone/core/widgets/icon_widget.dart';
 import 'package:contacts_phone/core/widgets/search_bar_widget.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_bloc.dart';
-import 'package:contacts_phone/features/contacts/presentation/contacts/pages/conatact_details_page.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/pages/contact_details_page.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/add_contact_sheet.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/contact_title.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -78,11 +78,12 @@ class _ContactsPageState extends State<ContactsPage> {
                 height: 22,
               ),
               selected: true,
-              isDark: isDark,
               onTap: () {
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  barrierColor: Colors.black.withAlpha(400),
                   builder: (_) => BlocProvider.value(
                     value: context.read<ContactBloc>(),
                     child: const AddContactSheet(),
@@ -103,11 +104,12 @@ class _ContactsPageState extends State<ContactsPage> {
               height: 20,
             ),
             selected: true,
-            isDark: isDark,
             onTap: () {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                barrierColor: Colors.black.withAlpha(400),
                 builder: (_) => BlocProvider.value(
                   value: context.read<ContactBloc>(),
                   child: const AddContactSheet(),
@@ -238,7 +240,7 @@ class _ContactsPageState extends State<ContactsPage> {
                         indexHintDecoration: const BoxDecoration(),
                         indexHintTextStyle: const TextStyle(fontSize: 0),
                       ),
-                      indexHintBuilder: (_, __) => const SizedBox.shrink(),
+                      indexHintBuilder: (_, _) => const SizedBox.shrink(),
                       susItemBuilder: (context, index) {
                         final tag = filtered[index].getSuspensionTag();
 

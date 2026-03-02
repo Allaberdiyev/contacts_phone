@@ -1,4 +1,5 @@
 import 'package:contacts_phone/app/theme.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class SearchBarWidget extends StatelessWidget {
@@ -7,9 +8,8 @@ class SearchBarWidget extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final VoidCallback onClear;
   final VoidCallback? onMic;
-  final bool
-  isDark; 
-  final String hintText;
+  final bool isDark;
+  final String? hintText;
 
   const SearchBarWidget({
     super.key,
@@ -19,7 +19,7 @@ class SearchBarWidget extends StatelessWidget {
     required this.onClear,
     required this.isDark,
     this.onMic,
-    this.hintText = 'Search',
+    this.hintText,
   });
 
   @override
@@ -52,7 +52,7 @@ class SearchBarWidget extends StatelessWidget {
               onChanged: onChanged,
               style: TextStyle(color: textMain, fontSize: 16),
               decoration: InputDecoration(
-                hintText: hintText,
+                hintText: hintText ?? 'search'.tr(),
                 hintStyle: TextStyle(color: hint),
                 border: InputBorder.none,
                 isDense: true,

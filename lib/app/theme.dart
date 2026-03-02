@@ -16,12 +16,23 @@ class AppPalette {
   final Color keypadFill;
   final Color keypadHi;
   final Color keypadBorder;
+
   final Color navBg;
   final Color navBorder;
   final Color navShadow;
   final Color navSelected;
   final Color navSplash;
   final Color navHighlight;
+
+  final Color navGlassTop;
+  final Color navGlassBottom;
+
+  final Color navThumb;
+  final Color navThumbBorder;
+
+  final Color navIconUnselected;
+  final Color navTextUnselected;
+
   final Color segmentBg;
   final Color segmentThumb;
   final Color segmentTextActive;
@@ -76,12 +87,21 @@ class AppPalette {
     required this.keypadFill,
     required this.keypadHi,
     required this.keypadBorder,
+
     required this.navBg,
     required this.navBorder,
     required this.navShadow,
     required this.navSelected,
     required this.navSplash,
     required this.navHighlight,
+
+    required this.navGlassTop,
+    required this.navGlassBottom,
+    required this.navThumb,
+    required this.navThumbBorder,
+    required this.navIconUnselected,
+    required this.navTextUnselected,
+
     required this.segmentBg,
     required this.segmentThumb,
     required this.segmentTextActive,
@@ -138,12 +158,22 @@ class AppPalette {
     keypadHi: Color(0xFF2A2A2A),
     keypadBorder: Color(0x1FFFFFFF),
 
-    navBg: Color(0xB81C1C1E),
-    navBorder: Color(0x8C2C2C2E),
-    navShadow: Color(0x59000000),
-    navSelected: Color(0x380A84FF),
+    navBg: Color(0xCC1C1C1E),
+    navBorder: Color(0x1FFFFFFF),
+    navShadow: Color(0x66000000),
+    navSelected: Color(0xFF323235),
     navSplash: Color(0x1A0A84FF),
-    navHighlight: Color(0x100A84FF),
+    navHighlight: Color(0x00000000),
+
+    navGlassTop: Color(0xEA1C1C1E),
+    navGlassBottom: Color(0xB81C1C1E),
+
+    navThumb: Color(0xBF323235),
+    navThumbBorder: Color(0x14FFFFFF),
+
+    navIconUnselected: Color(0xEBFFFFFF),
+    navTextUnselected: Color(0xDBFFFFFF),
+
     segmentBg: Color(0xB81C1C1E),
     segmentThumb: Color(0xFF2C2C2E),
     segmentTextActive: Color(0xFFFFFFFF),
@@ -166,17 +196,21 @@ class AppPalette {
     recentsSearchIcon: Color(0xB3FFFFFF),
     recentsSearchText: Color(0xFFFFFFFF),
     recentsSearchHint: Color(0x3DFFFFFF),
+
     searchBubbleBg: Color(0x1AFFFFFF),
     searchBubbleBorder: Color(0x0FFFFFFF),
     searchBubbleAvatarBg: Color(0x1AFFFFFF),
     searchBubbleTitle: Color(0xF2FFFFFF),
     searchBubbleSub: Color(0x8AFFFFFF),
     searchBubbleDivider: Color(0x1AFFFFFF),
+
     transparent: Color(0x00000000),
     avatarHighlight: Color(0x29FFFFFF),
+
     sheetAddBadgeBg: Color(0xFFFFFFFF),
     sheetAddBadgeBorder: Color(0xFF3A3A3C),
     sheetAddBadgeIcon: Color(0xFF3A3A3C),
+
     actionBtnBg: Color(0x1AFFFFFF),
     actionBtnBgDisabled: Color(0x0FFFFFFF),
     actionBtnBorder: Color(0x1AFFFFFF),
@@ -200,12 +234,22 @@ class AppPalette {
     keypadHi: Color(0xFFF4F4F4),
     keypadBorder: Color(0x1F000000),
 
-    navBg: Color(0xDDF2F2F7),
-    navBorder: Color(0xC0E5E5EA),
-    navShadow: Color(0x2E000000),
-    navSelected: Color(0x24007AFF),
+    navBg: Color(0xE6FFFFFF),
+    navBorder: Color(0x1A000000),
+    navShadow: Color(0x1F000000),
+    navSelected: Color(0xFF717171),
     navSplash: Color(0x1A007AFF),
-    navHighlight: Color(0x10007AFF),
+    navHighlight: Color(0x00000000),
+
+    navGlassTop: Color(0xF5FFFFFF),
+    navGlassBottom: Color(0xD1FFFFFF),
+
+    navThumb: Color.fromARGB(223, 221, 221, 221),
+    navThumbBorder: Color(0x59FFFFFF),
+
+    navIconUnselected: Color(0xFA000000),
+    navTextUnselected: Color(0xFA000000),
+
     segmentBg: Color(0xFFF2F2F7),
     segmentThumb: Color(0xFFFFFFFF),
     segmentTextActive: Color(0xFF000000),
@@ -228,17 +272,21 @@ class AppPalette {
     recentsSearchIcon: Color(0x8A000000),
     recentsSearchText: Color(0xFF000000),
     recentsSearchHint: Color(0x61000000),
+
     searchBubbleBg: Color(0xFFF2F2F7),
     searchBubbleBorder: Color(0xFFE5E5EA),
     searchBubbleAvatarBg: Color(0xFFFFFFFF),
     searchBubbleTitle: Color(0xFF000000),
     searchBubbleSub: Color(0x8A000000),
     searchBubbleDivider: Color(0xFFE5E5EA),
+
     transparent: Color(0x00000000),
-    avatarHighlight: Color(0x29FFFFFF),
+    avatarHighlight: Color(0x29000000),
+
     sheetAddBadgeBg: Color(0xFFF4F4F4),
     sheetAddBadgeBorder: Color(0xFF3A3A3C),
     sheetAddBadgeIcon: Color(0xFF3A3A3C),
+
     actionBtnBg: Color(0xFFF2F2F7),
     actionBtnBgDisabled: Color(0xFFE5E5EA),
     actionBtnBorder: Color(0xFFE5E5EA),
@@ -267,10 +315,8 @@ class AppTheme {
       onSecondary: b == Brightness.dark ? Colors.black : Colors.white,
       error: p.danger,
       onError: b == Brightness.dark ? Colors.black : Colors.white,
-      background: p.bg,
-      onBackground: p.text,
-      surface: p.surface,
       onSurface: p.text,
+      surface: p.surface,
       outline: p.separator,
       outlineVariant: p.separator,
     );
@@ -280,9 +326,7 @@ class AppTheme {
       brightness: b,
       colorScheme: cs,
       scaffoldBackgroundColor: p.bg,
-
       dividerTheme: DividerThemeData(color: p.separator, thickness: 0.7),
-
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -292,7 +336,6 @@ class AppTheme {
             ? SystemUiOverlayStyle.light
             : SystemUiOverlayStyle.dark,
       ),
-
       iconTheme: IconThemeData(color: p.text),
     );
   }
@@ -305,7 +348,7 @@ class ContactDetailsTheme {
     Color(0xFF584E77),
     Color(0xFF221E38),
   ];
-  
+
   static const List<double> backgroundStops = [0.0, 0.40, 0.70, 1.0];
 
   static const Color glassColor = Color(0xFF0A0814);

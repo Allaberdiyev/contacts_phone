@@ -18,3 +18,5 @@ class SaveContactEvent extends ContactEvent {
     this.imageFile,
   });
 }
+
+class SyncOfflineContactsEvent extends ContactEvent {}

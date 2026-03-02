@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacts_phone/app/theme.dart';
-import 'package:contacts_phone/features/contacts/presentation/contacts/pages/conatact_details_page.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/pages/contact_details_page.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/avatar.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,6 +26,8 @@ class ContactTile extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withAlpha(400),
       builder: (_) => BlocProvider.value(
         value: context.read<ContactBloc>(),
         child: AddContactSheet(contact: contact),

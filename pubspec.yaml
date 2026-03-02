@@ -28,6 +28,10 @@ dependencies:
   azlistview: ^2.0.0
   cupertino_icons: ^1.0.8
   flutter_launcher_icons: ^0.14.4
+  speech_to_text: ^7.3.0
+  animated_toggle_switch: ^0.8.7
+  flutter_svg: ^2.2.3
+  connectivity_plus: ^7.0.0
 
 dev_dependencies:
   flutter_test:
@@ -45,3 +49,4 @@ flutter:
   assets: 
     - assets/pictures/
     - assets/translations/
+    - assets/png/

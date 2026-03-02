@@ -7,7 +7,6 @@ class ContactsModel extends ISuspensionBean {
   final String phoneNumber;
   final String imageUrl;
 
-  @override
   String tag;
 
   ContactsModel({

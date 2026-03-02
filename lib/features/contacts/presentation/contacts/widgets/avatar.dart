@@ -1,5 +1,4 @@
 import 'package:contacts_phone/app/theme.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Avatar extends StatelessWidget {
@@ -23,7 +22,7 @@ class Avatar extends StatelessWidget {
           width: size,
           height: size,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _fallback(context),
+          errorBuilder: (_, _, _) => _fallback(context),
         ),
       );
     }
@@ -63,11 +62,11 @@ class Avatar extends StatelessWidget {
             ),
             Center(
               child: Text(
-                initials.isEmpty ? ' ' : initials,
+                initials.isEmpty ? '' : initials,
                 style: TextStyle(
                   fontWeight: FontWeight.w800,
                   fontSize: size * 0.36,
-                  color: p.text,
+                  color: Colors.white,
                 ),
               ),
             ),

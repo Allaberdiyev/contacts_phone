@@ -79,14 +79,12 @@ class _MainAppState extends State<MainApp> {
       builder: (_, mode, _) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-
           theme: AppTheme.light(),
           darkTheme: AppTheme.dark(),
           themeMode: mode,
           locale: context.locale,
           supportedLocales: context.supportedLocales,
           localizationsDelegates: context.localizationDelegates,
-
           initialRoute: Routers.contactsPage,
           routes: {
             Routers.contactsPage: (_) => BlocProvider(

@@ -2,6 +2,7 @@ import 'package:contacts_phone/app/theme.dart';
 import 'package:contacts_phone/features/contacts/presentation/favorites/widget/favorite_title.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../data/models/contacts_model.dart';
 import 'circle_button.dart';
 
@@ -52,7 +53,7 @@ class FavoritesListView extends StatelessWidget {
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    editing ? 'Done' : 'Edit',
+                    editing ? 'done'.tr() : 'edit'.tr(),
                     style: TextStyle(
                       color: textMain,
                       fontSize: 16,
@@ -63,7 +64,7 @@ class FavoritesListView extends StatelessWidget {
               ),
               const Spacer(),
               CircleFavButton(
-                isDark: isDark, 
+                isDark: isDark,
                 onTap: onOpenPicker,
                 icon: CupertinoIcons.plus,
               ),
@@ -76,7 +77,7 @@ class FavoritesListView extends StatelessWidget {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Favorites',
+              'favorites'.tr(),
               style: TextStyle(
                 color: textMain,
                 fontSize: 42,
@@ -90,7 +91,7 @@ class FavoritesListView extends StatelessWidget {
           child: ListView.separated(
             padding: const EdgeInsets.only(bottom: 12),
             itemCount: favorites.length,
-            separatorBuilder: (_, __) => Divider(
+            separatorBuilder: (_, _) => Divider(
               height: 1,
               thickness: 0.6,
               color: dividerColor,

@@ -27,7 +27,6 @@ class _BackspaceButtonState extends State<BackspaceButton> {
     final w = (widget.size * 0.4);
     final h = widget.size.clamp(44.0, 58.0);
 
-    // ✅ palette’dan: darkda oq, lightda qora
     final iconColor = down ? p.text2 : p.text;
 
     return GestureDetector(

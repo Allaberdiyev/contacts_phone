@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_phone/app/theme.dart';
 import 'package:contacts_phone/features/contacts/presentation/favorites/widget/circle_button.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EmptyFavoritesView extends StatelessWidget {
   final VoidCallback onAdd;
@@ -23,7 +24,7 @@ class EmptyFavoritesView extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 Text(
-                  'Favorites',
+                  'favorites'.tr(),
                   style: TextStyle(
                     color: p.text,
                     fontSize: 16,
@@ -33,7 +34,7 @@ class EmptyFavoritesView extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: CircleFavButton(
-                    isDark: isDark, 
+                    isDark: isDark,
                     onTap: onAdd,
                     icon: CupertinoIcons.plus,
                   ),
@@ -45,7 +46,7 @@ class EmptyFavoritesView extends StatelessWidget {
         Expanded(
           child: Center(
             child: Text(
-              'No Favorites',
+              'no_favorites'.tr(),
               style: TextStyle(
                 color: p.text3,
                 fontSize: 34,

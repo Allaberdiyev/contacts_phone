@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class RecentsHeaderDelegate extends SliverPersistentHeaderDelegate {
   final int tab;
@@ -52,7 +53,7 @@ class RecentsHeaderDelegate extends SliverPersistentHeaderDelegate {
             children: [
               Row(
                 children: [
-                  _PillButton(text: "Edit", onTap: onEditTap),
+                  _PillButton(text: "edit".tr(), onTap: onEditTap),
                   const SizedBox(width: 12),
                   Expanded(
                     child: _Segmented(value: tab, onChanged: onTabChanged),
@@ -68,7 +69,7 @@ class RecentsHeaderDelegate extends SliverPersistentHeaderDelegate {
               Opacity(
                 opacity: titleOpacity,
                 child: Text(
-                  "Recents",
+                  "recents".tr(),
                   style: TextStyle(
                     color: p.recentsTitleColor,
                     fontSize: 56,
@@ -206,8 +207,8 @@ class _Segmented extends StatelessWidget {
               ),
               Row(
                 children: [
-                  _segBtn(context, "All", value == 0, () => onChanged(0)),
-                  _segBtn(context, "Missed", value == 1, () => onChanged(1)),
+                  _segBtn(context, "all".tr(), value == 0, () => onChanged(0)),
+                  _segBtn(context, "missed".tr(), value == 1, () => onChanged(1)),
                 ],
               ),
             ],
@@ -277,7 +278,7 @@ class _SearchBar extends StatelessWidget {
               ),
               cursorColor: p.recentsSearchText,
               decoration: InputDecoration(
-                hintText: "Search",
+                hintText: "search".tr(),
                 hintStyle: TextStyle(
                   color: p.recentsSearchHint,
                   fontSize: 22,

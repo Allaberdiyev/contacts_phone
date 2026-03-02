@@ -9,6 +9,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> {
 
   ContactBloc(this.repository) : super(ContactInitial()) {
     on<SaveContactEvent>(_onSaveContact);
+    on<SyncOfflineContactsEvent>(_onSyncOfflineContacts);
   }
 
   Future<void> _onSaveContact(
@@ -44,7 +45,16 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> {
 
       emit(ContactSuccess());
     } catch (e) {
-      emit(ContactError('Error. Save contact'));
+      emit(ContactError('Saqlashda xatolik yuz berdi'));
     }
+  }
+
+  Future<void> _onSyncOfflineContacts(
+    SyncOfflineContactsEvent event,
+    Emitter<ContactState> emit,
+  ) async {
+    try {
+      await repository.syncOfflineContacts();
+    } catch (e) {}
   }
 }

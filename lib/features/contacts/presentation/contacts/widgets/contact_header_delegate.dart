@@ -1,10 +1,11 @@
 import 'dart:ui';
 import 'package:contacts_phone/app/theme.dart';
+import 'package:contacts_phone/core/widgets/icon_widget.dart';
 import 'package:contacts_phone/features/contacts/data/models/contacts_model.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/avatar.dart';
-import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/circle_back_buttons.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/segmented.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ContactHeaderDelegate extends SliverPersistentHeaderDelegate {
   final ContactsModel contact;
@@ -14,7 +15,7 @@ class ContactHeaderDelegate extends SliverPersistentHeaderDelegate {
   final ValueChanged<int> onSegmentChanged;
   final VoidCallback onBack;
   final VoidCallback onEdit;
-  final VoidCallback onSms;
+  final VoidCallback onSms; 
   final VoidCallback onCall;
   final VoidCallback onVideo;
   final VoidCallback onMail;
@@ -34,7 +35,7 @@ class ContactHeaderDelegate extends SliverPersistentHeaderDelegate {
   });
 
   @override
-  double get maxExtent => 430;
+  double get maxExtent => 480;
 
   @override
   double get minExtent => 170;
@@ -45,7 +46,6 @@ class ContactHeaderDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final pal = AppColors.of(context);
     final top = MediaQuery.of(context).padding.top;
 
     final total = maxExtent - minExtent;
@@ -56,7 +56,6 @@ class ContactHeaderDelegate extends SliverPersistentHeaderDelegate {
     final iconsOpacity = 1.0 - Curves.easeOut.transform(iconsFade);
 
     final blur = lerpDouble(0, 14, t)!;
-
     final glassOpacity = lerpDouble(0.0, 0.20, t)!;
 
     final avatarSize = lerpDouble(155, 44, t)!;
@@ -70,96 +69,108 @@ class ContactHeaderDelegate extends SliverPersistentHeaderDelegate {
     final nameY = lerpDouble(top + 255, top + 56, t)!;
 
     final iconsY = lerpDouble(top + 330, top + 96, t)!;
-    final segY = lerpDouble(top + 375, top + 98, t)!;
+    final segY = lerpDouble(top + 400, top + 98, t)!;
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        const SizedBox.expand(),
+    return SizedBox.expand(
+      child: Stack(
+        children: [
+          const SizedBox.expand(),
 
-        ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-            child: Opacity(
-              opacity: glassOpacity,
-              child: Container(color: ContactDetailsTheme.glassColor),
-            ),
-          ),
-        ),
-
-        Positioned(
-          top: top + 8,
-          left: 14,
-          child: CircleBackButton(onTap: onBack),
-        ),
-        Positioned(
-          top: top + 8,
-          right: 14,
-          child: EditPillButton(onTap: onEdit),
-        ),
-
-        Positioned(
-          top: avatarY,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: Avatar(
-              size: avatarSize,
-              initials: initials,
-              imageUrl: contact.imageUrl,
-            ),
-          ),
-        ),
-
-        Positioned(
-          top: nameY,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: Text(
-              name,
-              textAlign: TextAlign.center,
-              style: ContactDetailsTheme.title.copyWith(
-                fontSize: nameFont,
-                color: pal.text,
+          ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+              child: Opacity(
+                opacity: glassOpacity,
+                child: Container(color: ContactDetailsTheme.glassColor),
               ),
             ),
           ),
-        ),
 
-        Positioned(
-          top: iconsY,
-          left: 0,
-          right: 0,
-          child: IgnorePointer(
-            ignoring: iconsOpacity < 0.05,
-            child: Opacity(
-              opacity: iconsOpacity,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _ActionIcon(icon: Icons.chat_bubble_rounded, onTap: onSms),
-                  const SizedBox(width: 22),
-                  _ActionIcon(icon: Icons.phone_rounded, onTap: onCall),
-                  const SizedBox(width: 22),
-                  _ActionIcon(icon: Icons.videocam_rounded, onTap: onVideo),
-                  const SizedBox(width: 22),
-                  _ActionIcon(icon: Icons.mail_rounded, onTap: onMail),
-                ],
+          Positioned(
+            top: top + 8,
+            left: 14,
+            child: IconWidget(
+              type: IconContentType.icon,
+              icon: Icons.arrow_back_ios_new_rounded,
+              selected: true,
+              onTap: onBack,
+            ),
+          ),
+
+          Positioned(
+            top: top + 8,
+            right: 14,
+            child: IconWidget(
+              type: IconContentType.text,
+              text: "edit".tr(),
+              selected: true,
+              onTap: onEdit,
+            ),
+          ),
+
+          Positioned(
+            top: avatarY,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Avatar(
+                size: avatarSize,
+                initials: initials,
+                imageUrl: contact.imageUrl,
               ),
             ),
           ),
-        ),
 
-        Positioned(
-          top: segY,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: Segmented(value: segment, onChanged: onSegmentChanged),
+          Positioned(
+            top: nameY,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                style: ContactDetailsTheme.title.copyWith(
+                  fontSize: nameFont,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ),
-        ),
-      ],
+
+          Positioned(
+            top: iconsY,
+            left: 0,
+            right: 0,
+            child: IgnorePointer(
+              ignoring: iconsOpacity < 0.05,
+              child: Opacity(
+                opacity: iconsOpacity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _ActionIcon(icon: Icons.chat_bubble_rounded, onTap: onSms),
+                    const SizedBox(width: 22),
+                    _ActionIcon(icon: Icons.phone_rounded, onTap: onCall),
+                    const SizedBox(width: 22),
+                    _ActionIcon(icon: Icons.videocam_rounded, onTap: onVideo),
+                    const SizedBox(width: 22),
+                    _ActionIcon(icon: Icons.mail_rounded, onTap: onMail),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            top: segY,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Segmented(value: segment, onChanged: onSegmentChanged),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -180,10 +191,8 @@ class _ActionIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final p = AppColors.of(context);
-
     final bg = ContactDetailsTheme.actionTint;
-    final iconColor = p.text;
+    final iconColor = Colors.white;
 
     return InkWell(
       borderRadius: BorderRadius.circular(999),

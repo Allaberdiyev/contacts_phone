@@ -1,5 +1,5 @@
 import 'package:contacts_phone/app/theme.dart';
-import 'package:contacts_phone/features/contacts/presentation/keypad/widgets/create_open.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/add_contact_sheet.dart';
 import 'package:contacts_phone/features/contacts/presentation/keypad/widgets/dial_displey.dart';
 import 'package:contacts_phone/features/contacts/presentation/keypad/widgets/dial_pad.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:contacts_phone/features/contacts/data/models/contacts_model.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_bloc.dart';
 import 'package:contacts_phone/features/contacts/presentation/contacts/bloc/contacts_state.dart';
-import 'package:contacts_phone/features/contacts/presentation/contacts/pages/conatact_details_page.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/pages/contact_details_page.dart';
 
 import '../utils/dial_search.dart';
 import '../utils/phone_format.dart';
@@ -178,7 +178,18 @@ class _KeypadPageState extends State<KeypadPage> {
                             color: iconColor,
                             size: 32,
                           ),
-                          onPressed: () => openCreateNew(context, qDigits),
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (bottomSheetContext) {
+                                return BlocProvider.value(
+                                  value: context.read<ContactBloc>(),
+                                  child: AddContactSheet(presetPhone: qDigits),
+                                );
+                              },
+                            );
+                          },
                         )
                       : const SizedBox(width: 44, height: 44),
                 ),

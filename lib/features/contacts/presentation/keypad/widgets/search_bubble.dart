@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:contacts_phone/app/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:contacts_phone/features/contacts/data/models/contacts_model.dart';
 import '../utils/phone_format.dart';
@@ -105,7 +106,7 @@ class SearchBubble extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'More Results',
+                        'more_results'.tr(), 
                         style: TextStyle(
                           color: p.searchBubbleSub,
                           fontSize: 18,

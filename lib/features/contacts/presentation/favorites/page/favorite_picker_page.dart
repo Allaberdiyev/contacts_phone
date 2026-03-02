@@ -4,6 +4,7 @@ import 'package:contacts_phone/features/contacts/presentation/contacts/widgets/a
 import 'package:contacts_phone/features/contacts/presentation/favorites/widget/save_shared_pref_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../data/models/contacts_model.dart';
 
@@ -61,7 +62,7 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
           children: [
             const SizedBox(height: 6),
             Text(
-              'Choose a contact to add to Favorites',
+              'choose_contact_to_add'.tr(),
               style: TextStyle(color: subColor, fontSize: 11),
             ),
             const SizedBox(height: 8),
@@ -81,7 +82,7 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
                       ),
                     ),
                     Text(
-                      'Contacts',
+                      'contacts'.tr(),
                       style: TextStyle(
                         color: titleColor,
                         fontSize: 16,
@@ -100,7 +101,6 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
               ),
             ),
 
-            // Search
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
               child: Container(
@@ -121,7 +121,7 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
                         onChanged: (v) => setState(() => _q = v),
                         style: TextStyle(color: titleColor, fontSize: 15),
                         decoration: InputDecoration(
-                          hintText: 'Search',
+                          hintText: 'search'.tr(),
                           hintStyle: TextStyle(color: hintColor),
                           border: InputBorder.none,
                           isDense: true,
@@ -148,7 +148,6 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
               ),
             ),
 
-            // List
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -173,7 +172,7 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
 
                   return ListView.separated(
                     itemCount: list.length,
-                    separatorBuilder: (_, __) => Divider(
+                    separatorBuilder: (_, _) => Divider(
                       height: 1,
                       thickness: 0.6,
                       color: pillBorder,
@@ -187,7 +186,7 @@ class _FavoritePickerPageState extends State<FavoritePickerPage> {
                       return InkWell(
                         onTap: () async {
                           await SaveSharedPrefWidget.add(c.id);
-                          if (!mounted) return;
+                          if (!context.mounted) return;
                           Navigator.pop(context, true);
                         },
                         child: Padding(

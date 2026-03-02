@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_phone/app/theme.dart';
-import 'package:contacts_phone/features/contacts/presentation/contacts/pages/conatact_details_page.dart';
+import 'package:contacts_phone/features/contacts/presentation/contacts/pages/contact_details_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../data/models/contacts_model.dart';
 
 class FavoriteTileItem extends StatelessWidget {
@@ -101,7 +102,7 @@ class FavoriteTileItem extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'mobile',
+                          'mobile'.tr(),
                           style: TextStyle(
                             color: subColor,
                             fontSize: 16,

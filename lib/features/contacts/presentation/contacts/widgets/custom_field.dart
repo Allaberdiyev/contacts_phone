@@ -27,8 +27,6 @@ class CustomField extends StatelessWidget {
 
     final fill = isDark ? p.surface2 : p.surface;
     final border = p.keypadBorder;
-    final focus = p.primary;
-    final error = p.danger;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -40,7 +38,7 @@ class CustomField extends StatelessWidget {
         inputFormatters: inputFormatters ?? const [],
         validator: validator,
         textCapitalization: TextCapitalization.words,
-        cursorColor: focus,
+        cursorColor: border,
         style: TextStyle(color: p.text, fontWeight: FontWeight.w700),
         decoration: InputDecoration(
           hintText: hintText,
@@ -54,15 +52,15 @@ class CustomField extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: focus, width: 1.4),
+            borderSide: BorderSide(color: border, width: 1.4),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: error, width: 1),
+            borderSide: BorderSide(color: border, width: 1),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: error, width: 1.4),
+            borderSide: BorderSide(color: border, width: 1.4),
           ),
         ),
       ),
